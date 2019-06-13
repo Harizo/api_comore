@@ -1,13 +1,13 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Region_model extends CI_Model
+class Village_model extends CI_Model
 {
-    protected $table = 'see_region';
+    protected $table = 'see_village';
 
 
-    public function add($region)
+    public function add($village)
     {
-        $this->db->set($this->_set($region))
+        $this->db->set($this->_set($village))
                             ->insert($this->table);
         if($this->db->affected_rows() === 1)
         {
@@ -18,9 +18,9 @@ class Region_model extends CI_Model
     }
 
 
-    public function update($id, $region)
+    public function update($id, $village)
     {
-        $this->db->set($this->_set($region))
+        $this->db->set($this->_set($village))
                             ->where('id', (int) $id)
                             ->update($this->table);
         if($this->db->affected_rows() === 1)
@@ -31,12 +31,11 @@ class Region_model extends CI_Model
         }                      
     }
 
-    public function _set($region)
+    public function _set($village)
     {
         return array(
-            'code'       =>      $region['code'],
-            'nom'        =>      $region['nom'],
-            'superficie'    =>      $region['superficie']                       
+            'code'       =>      $village['code'],
+            'libelle'    =>      $village['libelle']                       
         );
     }
 
@@ -56,7 +55,7 @@ class Region_model extends CI_Model
     {
         $result =  $this->db->select('*')
                         ->from($this->table)
-                        ->order_by('nom')
+                        ->order_by('id')
                         ->get()
                         ->result();
         if($result)
@@ -67,12 +66,12 @@ class Region_model extends CI_Model
         }                 
     }
 
-    public function findAllByIle($ile_id)
+    public function findAllByCommune($commune_id)
     {
         $result =  $this->db->select('*')
                         ->from($this->table)
-                        ->order_by('Region')
-                        ->where("ile_id", $ile_id)
+                        ->order_by('Village')
+                        ->where("commune_id", $commune_id)
                         ->get()
                         ->result();
         if($result)
@@ -82,7 +81,9 @@ class Region_model extends CI_Model
             return null;
         }                 
     }
-    public function findById($id)  {
+
+    public function findById($id)
+    {
         $this->db->where("id", $id);
         $q = $this->db->get($this->table);
         if ($q->num_rows() > 0) {
@@ -90,17 +91,5 @@ class Region_model extends CI_Model
         }
         return null;
     }
-    public function findByIdArray($id)  {
-        $result =  $this->db->select('*')
-                        ->from($this->table)
-                        ->where("id", $id)
-                        ->order_by('id', 'asc')
-                        ->get()
-                        ->result();
-        if($result) {
-            return $result;
-        }else{
-            return null;
-        }                 
-    }
+
 }

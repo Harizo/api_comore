@@ -24,6 +24,7 @@ class Enquete_menage_model extends CI_Model {
     }
     public function _set($secteur) {
         return array(
+            'code' => $secteur['code'],
             'description' => $secteur['description'],
         );
     }

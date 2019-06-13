@@ -1,31 +1,47 @@
 <?php
 
 defined('BASEPATH') OR exit('No direct script access allowed');
-
+//harizo
+// afaka fafana refa ts ilaina
 require APPPATH . '/libraries/REST_Controller.php';
 
-class Enquete_menage extends REST_Controller {
+class Village extends REST_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->load->model('enquete_menage_model', 'EnquetemenageManager');
+        $this->load->model('village_model', 'villageManager');
+        $this->load->model('site_model', 'SiteManager');
     }
 
     public function index_get() {
         $id = $this->get('id');
-        $nom_table = $this->get('nom_table');		
-		$data = array();
-		if ($id) {
-			/*$tmp = $this->EnquetemenageManager->findById($nom_table);
-			if($tmp) {
-				$data=$tmp;
-			}*/
-		} else {			
-			$tmp = $this->EnquetemenageManager->findAll($nom_table);
-			if ($tmp) {
-				$data=$tmp;
-			}
-		}
+        $cle_etrangere = $this->get('cle_etrangere');
+
+        if ($cle_etrangere) {
+            $data = $this->villageManager->findAllByCommune($cle_etrangere);
+            
+        } else {
+            if ($id) {
+                $data = array();
+                $village = $this->villageManager->findById($id);
+                $data['id'] = $village->id;
+                $data['code'] = $village->code;
+                $data['nom'] = $village->nom;
+                
+            } else {
+                $village = $this->villageManager->findAll();
+                if ($village) {
+                    foreach ($village as $key => $value) {
+                        
+                        $data[$key]['id'] = $value->id;
+                        $data[$key]['code'] = $value->code;
+                        $data[$key]['nom'] = $value->nom;
+                        
+                    };
+                } else
+                    $data = array();
+            }
+        }
         if (count($data)>0) {
             $this->response([
                 'status' => TRUE,
@@ -34,7 +50,7 @@ class Enquete_menage extends REST_Controller {
             ], REST_Controller::HTTP_OK);
         } else {
             $this->response([
-                'status' => TRUE,
+                'status' => FALSE,
                 'response' => array(),
                 'message' => 'No data were found'
             ], REST_Controller::HTTP_OK);
@@ -42,14 +58,13 @@ class Enquete_menage extends REST_Controller {
     }
     public function index_post() {
         $id = $this->post('id') ;
-        $nom_table = $this->post('nom_table') ;
         $supprimer = $this->post('supprimer') ;
-		$data = array(
-			'description' => $this->post('description'),
-			'code' => $this->post('code'),
-		);               
         if ($supprimer == 0) {
             if ($id == 0) {
+                $data = array(
+                    'code' => $this->post('code'),
+                    'nom' => $this->post('nom')
+                );               
                 if (!$data) {
                     $this->response([
                         'status' => FALSE,
@@ -57,7 +72,7 @@ class Enquete_menage extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-                $dataId = $this->EnquetemenageManager->add($data,$nom_table);              
+                $dataId = $this->villageManager->add($data);              
                 if (!is_null($dataId)) {
                     $this->response([
                         'status' => TRUE,
@@ -72,6 +87,10 @@ class Enquete_menage extends REST_Controller {
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
             } else {
+                $data = array(
+                    'code' => $this->post('code'),
+                    'nom' => $this->post('nom')
+                );              
                 if (!$data || !$id) {
                     $this->response([
                         'status' => FALSE,
@@ -79,7 +98,7 @@ class Enquete_menage extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-                $update = $this->EnquetemenageManager->update($id, $data,$nom_table);              
+                $update = $this->villageManager->update($id, $data);              
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
@@ -101,7 +120,7 @@ class Enquete_menage extends REST_Controller {
             'message' => 'No request found'
                 ], REST_Controller::HTTP_BAD_REQUEST);
             }
-            $delete = $this->EnquetemenageManager->delete($id,$nom_table);          
+            $delete = $this->villageManager->delete($id);          
             if (!is_null($delete)) {
                 $this->response([
                     'status' => TRUE,
@@ -118,4 +137,5 @@ class Enquete_menage extends REST_Controller {
         }   
     }
 }
-?>
+/* End of file controllername.php */
+/* Location: ./application/controllers/controllername.php */

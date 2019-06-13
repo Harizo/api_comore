@@ -20,7 +20,7 @@ class Commune extends REST_Controller {
         $id_region = $this->get('id_region');
 		$taiza="";
         if ($cle_etrangere) {
-            $data = $this->CommuneManager->findAllByDistrict($cle_etrangere);           
+            $data = $this->CommuneManager->findAllByRegion($cle_etrangere);           
         } else {
             if ($id)  {
                 $data = array();

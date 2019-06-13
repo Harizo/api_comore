@@ -18,7 +18,7 @@ class Region extends REST_Controller {
         $cle_etrangere = $this->get('cle_etrangere');
 
         if ($cle_etrangere) {
-            $data = $this->RegionManager->findAllBySite($cle_etrangere);
+            $data = $this->RegionManager->findAllByIle($cle_etrangere);
             
         } else {
             if ($id) {

@@ -1,7 +1,7 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
 class Commune_model extends CI_Model {
-    protected $table = 'commune';
+    protected $table = 'see_commune';
 
     public function add($commune) {
         $this->db->set($this->_set($commune))
@@ -93,6 +93,22 @@ class Commune_model extends CI_Model {
             return null;
         }                 
     }
+
+    public function findAllByRegion($region_id) {
+        $result =  $this->db->select('*')
+                        ->from($this->table)
+                        ->order_by('Commune')
+                        ->where("region_id", $region_id)
+                        ->get()
+                        ->result();
+        if($result) {
+            return $result;
+        }else{
+            return null;
+        }                 
+    }
+
+
     public function findById($id) {
         $result =  $this->db->select('*')
                         ->from($this->table)

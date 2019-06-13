@@ -2,7 +2,7 @@
 
 class Utilisateurs_model extends CI_Model
 {
-    protected $table = 'utilisateur';
+    protected $table = 'see_user';
 
 
     public function add($utilisateurs)

@@ -43,7 +43,7 @@ class Programme extends REST_Controller {
         $id = $this->post('id') ;
         $supprimer = $this->post('supprimer') ;
 		$data = array(
-			'intitule' => $this->post('intitule'),
+			'libelle' => $this->post('libelle'),
 		);               
         if ($supprimer == 0) {
             if ($id == 0) {

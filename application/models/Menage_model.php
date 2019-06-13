@@ -1,64 +1,95 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Programme_model extends CI_Model {
-    protected $table = 'programme';
+class Menage_model extends CI_Model
+{
+    protected $table = 'menage';
 
-    public function add($programme)  {
-        $this->db->set($this->_set($programme))
+
+    public function add($menage)
+    {
+        $this->db->set($this->_set($menage))
                             ->insert($this->table);
-        if($this->db->affected_rows() === 1)  {
+        if($this->db->affected_rows() === 1)
+        {
             return $this->db->insert_id();
         }else{
             return null;
         }                    
     }
-    public function update($id, $programme)  {
-        $this->db->set($this->_set($programme))
+
+
+    public function update($id, $menage)
+    {
+        $this->db->set($this->_set($menage))
                             ->where('id', (int) $id)
                             ->update($this->table);
-        if($this->db->affected_rows() === 1)  {
+        if($this->db->affected_rows() === 1)
+        {
             return true;
         }else{
             return null;
         }                      
     }
-    public function _set($programme) {
+
+    public function _set($menage)
+    {
         return array(
-            'libelle' => $programme['libelle'],
+            'code'       =>      $menage['code'],
+            'libelle'    =>      $menage['libelle']                       
         );
     }
-    public function delete($id) {
+
+
+    public function delete($id)
+    {
         $this->db->where('id', (int) $id)->delete($this->table);
-        if($this->db->affected_rows() === 1)  {
+        if($this->db->affected_rows() === 1)
+        {
             return true;
         }else{
             return null;
         }  
     }
-    public function findAll() {
+
+    public function findAll()
+    {
         $result =  $this->db->select('*')
                         ->from($this->table)
-                        ->order_by('libelle')
+                        ->order_by('id')
                         ->get()
                         ->result();
-        if($result) {
+        if($result)
+        {
             return $result;
         }else{
             return null;
         }                 
     }
-    public function findById($id) {
+
+    public function findAllByVillage($village_id)
+    {
         $result =  $this->db->select('*')
                         ->from($this->table)
-                        ->where("id", $id)
-                        ->order_by('id', 'asc')
+                        ->order_by('id')
+                        ->where("village_id", $village_id)
                         ->get()
                         ->result();
-        if($result) {
+        if($result)
+        {
             return $result;
         }else{
             return null;
         }                 
     }
+
+    public function findById($id)
+    {
+        $this->db->where("id", $id);
+        $q = $this->db->get($this->table);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return null;
+    }
+
 }
-?>
