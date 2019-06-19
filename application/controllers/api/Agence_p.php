@@ -4,10 +4,12 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 require APPPATH . '/libraries/REST_Controller.php';
 
-class Programme extends REST_Controller {
+class Agence_p extends REST_Controller {
 
     public function __construct() {
         parent::__construct();
+        $this->load->model('agence_p_model', 'Agence_pManager');
+        $this->load->model('ile_model', 'ileManager');
         $this->load->model('programme_model', 'ProgrammeManager');
     }
 
@@ -15,20 +17,36 @@ class Programme extends REST_Controller {
         $id = $this->get('id');
 		$data = array();
 		if ($id) {
-			$tmp = $this->ProgrammeManager->findById($id);
+			$tmp = $this->Agence_pManager->findById($id);
 			if($tmp) {
-				$data=$tmp;
+				    $ile = $this->ileManager->findById($value->ile_id);
+                    $prog = $this->ProgrammeManager->findById($value->programme_id);
+                    $data[$key]['id'] = $value->id;
+                    $data[$key]['Code'] = $value->Code;
+                    $data[$key]['Nom'] = $value->Nom;
+                    $data[$key]['Contact'] = $value->Contact;
+                    $data[$key]['Telephone'] = $value->Telephone;
+                    $data[$key]['Representant'] = $value->Representant;
+                    $data[$key]['ile'] = $ile;
+                    $data[$key]['programme'] = $prog[0];
 			}
 		} else {			
-			$tmp = $this->ProgrammeManager->findAll();
+			$tmp = $this->Agence_pManager->findAll();
 			if ($tmp) {
-                foreach ($tmp as $key => $value) {
-                    $data[$key]['id']=$value->id;
-                    $data[$key]['libelle']=$value->libelle;
-                }
-				
-			}else
-                    $data = array();
+				foreach ($tmp as $key => $value) {
+					
+					$ile = $this->ileManager->findById($value->ile_id);
+                    $prog = $this->ProgrammeManager->findById($value->programme_id);
+                    $data[$key]['id'] = $value->id;
+                    $data[$key]['Code'] = $value->Code;
+                    $data[$key]['Nom'] = $value->Nom;
+                    $data[$key]['Contact'] = $value->Contact;
+                    $data[$key]['Telephone'] = $value->Telephone;
+                    $data[$key]['Representant'] = $value->Representant;
+                    $data[$key]['ile'] = $ile;
+                    $data[$key]['programme'] = $prog[0];
+				}	
+			}
 		}
         if (count($data)>0) {
             $this->response([
@@ -46,9 +64,16 @@ class Programme extends REST_Controller {
     }
     public function index_post() {
         $id = $this->post('id') ;
-        $supprimer = $this->post('supprimer') ;
+        $supprimer = $this->post('supprimer') ;		
+				
 		$data = array(
-			'libelle' => $this->post('libelle'),
+			'Code' => $this->post('Code'),
+            'Nom' => $this->post('Nom'),
+            'Contact' => $this->post('Contact'),
+            'Telephone' => $this->post('Telephone'),
+            'Representant' => $this->post('Representant'),
+            'ile_id' => $this->post('ile_id'),
+            'programme_id' => $this->post('programme_id')
 		);               
         if ($supprimer == 0) {
             if ($id == 0) {
@@ -59,7 +84,7 @@ class Programme extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-                $dataId = $this->ProgrammeManager->add($data);              
+                $dataId = $this->Agence_pManager->add($data);              
                 if (!is_null($dataId)) {
                     $this->response([
                         'status' => TRUE,
@@ -81,7 +106,7 @@ class Programme extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-                $update = $this->ProgrammeManager->update($id, $data);              
+                $update = $this->Agence_pManager->update($id, $data);              
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
@@ -103,7 +128,7 @@ class Programme extends REST_Controller {
             'message' => 'No request found'
                 ], REST_Controller::HTTP_BAD_REQUEST);
             }
-            $delete = $this->ProgrammeManager->delete($id);          
+            $delete = $this->Agence_pManager->delete($id);          
             if (!is_null($delete)) {
                 $this->response([
                     'status' => TRUE,

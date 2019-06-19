@@ -34,8 +34,9 @@ class Ile_model extends CI_Model
     public function _set($ile)
     {
         return array(
-            'code'       =>      $ile['code'],
-            'libelle'    =>      $ile['libelle']                       
+            'Code'          =>      $ile['Code'],
+            'Ile'           =>      $ile['Ile'],
+            'programme_id'  =>      $ile['programme_id']                        
         );
     }
 

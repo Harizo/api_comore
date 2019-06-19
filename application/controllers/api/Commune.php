@@ -10,51 +10,62 @@ class Commune extends REST_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('commune_model', 'CommuneManager');
-        $this->load->model('district_model', 'DistrictManager');
+        $this->load->model('region_model', 'RegionManager');
+        $this->load->model('programme_model', 'ProgrammeManager');
     }
     public function index_get() {
         $id = $this->get('id');
         $cle_etrangere = $this->get('cle_etrangere');
         $id_commune = $this->get('id_commune');
-        $id_district = $this->get('id_district');
+       $id_district = $this->get('id_district');
         $id_region = $this->get('id_region');
 		$taiza="";
+      
         if ($cle_etrangere) {
             $data = $this->CommuneManager->findAllByRegion($cle_etrangere);           
         } else {
+ //miasa           
             if ($id)  {
                 $data = array();
                 $commune = $this->CommuneManager->findById($id);
-                $district = $this->DistrictManager->findById($commune->district_id);
+                $pref = $this->RegionManager->findById($commune->region_id);
+                $prog = $this->ProgrammeManager->findById($value->programme_id);
                 $data['id'] = $commune->id;
-                $data['code'] = $commune->code;
-                $data['nom'] = $commune->nom;
-                $data['district'] = $district;
-            } else if($id_commune) {
+                $data['Code'] = $commune->Code;
+                $data['Commune'] = $commune->Commune;
+                $data['prefecture'] = $pref;
+                $data['programme'] = $prog[0];
+           
+          /*  } else if($id_commune) {    
 				$taiza="Ato ambony ary id_commune=".$id_commune."  ary id_region=".$id_region; 
 				$menu = $this->CommuneManager->find_Fokontany_avec_District_et_Region($id_commune);
                 if ($menu) {
 					$data=$menu;
                 } else
                     $data = array();
-			} else if($id_district) {	
+		
+            } else if($id_district) {	
 				$menu = $this->CommuneManager->find_Commune_avec_District_et_Region($id_district);
                 if ($menu) {
 					$data=$menu;
                 } else
-                    $data = array();
-			} else {
+                    $data = array();*/
+//miasa 			
+            } else {
 				$taiza="findAll no nataony";
                 $menu = $this->CommuneManager->findAll();
+                
                 if ($menu) {
                     foreach ($menu as $key => $value) {
-                        $district = array();
-                        $district = $this->DistrictManager->findById($value->district_id);
+                        
+                        $pref = $this->RegionManager->findById($value->region_id);
+                        $prog = $this->ProgrammeManager->findById($value->programme_id);
+                        
                         $data[$key]['id'] = $value->id;
-                        $data[$key]['code'] = $value->code;
-                        $data[$key]['nom'] = $value->nom;
-                        $data[$key]['district_id'] = $value->district_id;
-                        $data[$key]['district'] = $district;
+                        $data[$key]['Code'] = $value->Code;
+                        $data[$key]['Commune'] = $value->Commune;
+                        $data[$key]['prefecture'] = $pref;
+                        $data[$key]['programme'] = $prog[0];
                     }
                 } else
                     $data = array();
@@ -81,9 +92,10 @@ class Commune extends REST_Controller {
         if ($supprimer == 0) {
             if ($id == 0) {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'nom' => $this->post('nom'),
-                    'district_id' => $this->post('district_id')
+                    'Code' => $this->post('Code'),
+                    'Commune' => $this->post('Commune'),
+                    'region_id' => $this->post('region_id'),
+                    'programme_id' => $this->post('programme_id')
                 );
                 if (!$data) {
                     $this->response([
@@ -108,9 +120,10 @@ class Commune extends REST_Controller {
                 }         
             } else {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'nom' => $this->post('nom'),
-                    'district_id' => $this->post('district_id')
+                    'Code' => $this->post('Code'),
+                    'Commune' => $this->post('Commune'),
+                    'region_id' => $this->post('region_id'),
+                    'programme_id' => $this->post('programme_id')
                 );
                 if (!$data || !$id) {
                     $this->response([

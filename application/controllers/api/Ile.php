@@ -10,6 +10,7 @@ class Ile extends REST_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('ile_model', 'ileManager');
+        $this->load->model('programme_model', 'ProgrammeManager');
     }
 
     public function index_get() {
@@ -20,19 +21,26 @@ class Ile extends REST_Controller {
                 /*$data['id'] = $ile->id;
                 $data['code'] = $ile->code;
                 $data['libelle'] = $ile->libelle;*/
+               /* $il = $this->ileManager->findById($id);
+                $prog = $this->ProgrammeManager->findById($ile->programme_id);
+                $data['id'] = $il->id;
+                $data['Code'] = $il->Code;
+                $data['Ile'] = $il->Ile;
+                $data['programme'] = $prog[0];*/
                 
             } else {
-                $data = $this->ileManager->findAll();
-                /*if ($ile) {
+                $ile = $this->ileManager->findAll();
+                if ($ile) {
                     foreach ($ile as $key => $value) {
-                        
+                        $prog = $this->ProgrammeManager->findById($value->programme_id);
                         $data[$key]['id'] = $value->id;
-                        $data[$key]['code'] = $value->code;
-                        $data[$key]['libelle'] = $value->libelle;
+                        $data[$key]['Code'] = $value->Code;
+                        $data[$key]['Ile'] = $value->Ile;
+                        $data[$key]['programme'] = $prog[0];
                         
                     };
                 } else
-                    $data = array();*/
+                    $data = array();
             }
         
         if (count($data)>0) {
@@ -55,8 +63,9 @@ class Ile extends REST_Controller {
         if ($supprimer == 0) {
             if ($id == 0) {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'libelle' => $this->post('libelle')
+                    'Code' => $this->post('Code'),
+                    'Ile' => $this->post('Ile'),
+                    'programme_id' => $this->post('programme_id')
                 );               
                 if (!$data) {
                     $this->response([
@@ -81,8 +90,9 @@ class Ile extends REST_Controller {
                 }
             } else {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'libelle' => $this->post('libelle')
+                    'Code' => $this->post('Code'),
+                    'Ile' => $this->post('Ile'),
+                    'programme_id' => $this->post('programme_id')
                 );              
                 if (!$data || !$id) {
                     $this->response([
