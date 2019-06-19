@@ -1,13 +1,13 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Menage_model extends CI_Model
+class Individu_programme_model extends CI_Model
 {
-    protected $table = 'menage';
+    protected $table = 'individu_programme';
 
 
-    public function add($menage)
+    public function add($individu_programme)
     {
-        $this->db->set($this->_set($menage))
+        $this->db->set($this->_set($individu_programme))
                             ->insert($this->table);
         if($this->db->affected_rows() === 1)
         {
@@ -18,9 +18,9 @@ class Menage_model extends CI_Model
     }
 
 
-    public function update($id, $menage)
+    public function update($id, $individu_programme)
     {
-        $this->db->set($this->_set($menage))
+        $this->db->set($this->_set($individu_programme))
                             ->where('id', (int) $id)
                             ->update($this->table);
         if($this->db->affected_rows() === 1)
@@ -31,17 +31,11 @@ class Menage_model extends CI_Model
         }                      
     }
 
-    public function _set($menage)
+    public function _set($individu_programme)
     {
         return array(
-            'DateInscription'       =>      $menage['DateInscription'],
-            'village_id'            =>      $menage['village_id'],                       
-            'NumeroEnregistrement'  =>      $menage['NumeroEnregistrement'],                       
-            'NomInscrire'           =>      $menage['NomInscrire'],                       
-            'PersonneInscription'   =>      $menage['PersonneInscription'],                       
-            'AgeInscrire'           =>      $menage['AgeInscrire'],                       
-            'SexeChefMenage'        =>      $menage['SexeChefMenage'],                       
-            'Addresse'               =>      $menage['Addresse']                      
+            'id_individu'          =>      $individu_programme['id_individu'],
+            'id_programme'         =>      $individu_programme['id_programme']                      
         );
     }
 
@@ -72,12 +66,20 @@ class Menage_model extends CI_Model
         }                 
     }
 
-    public function findAllByVillage($village_id)
+    public function findAllByProgramme($id_programmes)
     {
-        $result =  $this->db->select('*')
+        $result =  $this->db->select('individu.id as id_individu,
+                                        individu_programme.id as id,
+                                        individu.Nom as Nom,
+                                        individu.DateNaissance as DateNaissance,
+                                        individu.Activite as Activite,
+                                        individu.aptitude as aptitude,
+                                        individu.travailleur as travailleur
+                                        ')
                         ->from($this->table)
-                        ->order_by('id')
-                        ->where("village_id", $village_id)
+                        ->join('individu', 'individu.id = individu_programme.id_individu')
+                    //    ->order_by('id')
+                        ->like('id_programme', $id_programmes)
                         ->get()
                         ->result();
         if($result)
@@ -85,18 +87,18 @@ class Menage_model extends CI_Model
             return $result;
         }else{
             return null;
-        }                 
+        }                  
     }
 
-    public function find_max_id()
+    public function findAllByindividu($id_individu)
     {
-        $q =  $this->db->select_max('id')
-                        ->from($this->table)
-                        ->get();
+        
+        $this->db->where("id_individu", $id_individu);
+        $q = $this->db->get($this->table);
         if ($q->num_rows() > 0) {
             return $q->row();
         }
-        return null;              
+        return null;  
     }
 
     public function findById($id)

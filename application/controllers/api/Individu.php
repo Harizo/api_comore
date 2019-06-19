@@ -26,22 +26,11 @@ class Individu extends REST_Controller {
             if ($id) {
                
                 $data = $this->individuManager->findById($id);
-                /*$data['id'] = $individu->id;
-                $data['code'] = $individu->code;
-                $data['libelle'] = $individu->libelle;*/
+               
                 
             } else {
                 $data = $this->individuManager->findAll();
-                /*if ($individu) {
-                    foreach ($individu as $key => $value) {
-                        
-                        $data[$key]['id'] = $value->id;
-                        $data[$key]['code'] = $value->code;
-                        $data[$key]['libelle'] = $value->libelle;
-                        
-                    };
-                } else
-                    $data = array();*/
+                
             }
         }
             
@@ -66,8 +55,11 @@ class Individu extends REST_Controller {
         if ($supprimer == 0) {
             if ($id == 0) {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'libelle' => $this->post('libelle')
+                    'menage_id' => $this->post('menage_id'),
+                    'Nom' => $this->post('Nom'),
+                    'DateNaissance' => $this->post('DateNaissance'),
+                    'Activite' => $this->post('Activite'),
+                    'travailleur' => $this->post('travailleur')
                 );               
                 if (!$data) {
                     $this->response([
@@ -92,8 +84,12 @@ class Individu extends REST_Controller {
                 }
             } else {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'libelle' => $this->post('libelle')
+                    'menage_id' => $this->post('menage_id'),
+                    'Nom' => $this->post('Nom'),
+                    'DateNaissance' => $this->post('DateNaissance'),
+                    'Activite' => $this->post('Activite'),
+              
+                    'travailleur' => $this->post('travailleur')
                 );              
                 if (!$data || !$id) {
                     $this->response([
