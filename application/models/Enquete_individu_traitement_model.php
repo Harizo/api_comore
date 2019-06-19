@@ -1,13 +1,13 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Individu_model extends CI_Model
+class Enquete_individu_traitement_model extends CI_Model
 {
-    protected $table = 'individu';
+    protected $table = 'enquete_individu';
 
 
-    public function add($individu)
+    public function add($enquete_individu_traitement)
     {
-        $this->db->set($this->_set($individu))
+        $this->db->set($this->_set($enquete_individu_traitement))
                             ->insert($this->table);
         if($this->db->affected_rows() === 1)
         {
@@ -18,9 +18,9 @@ class Individu_model extends CI_Model
     }
 
 
-    public function update($id, $individu)
+    public function update($id, $enquete_individu_traitement)
     {
-        $this->db->set($this->_set($individu))
+        $this->db->set($this->_set($enquete_individu_traitement))
                             ->where('id', (int) $id)
                             ->update($this->table);
         if($this->db->affected_rows() === 1)
@@ -31,14 +31,16 @@ class Individu_model extends CI_Model
         }                      
     }
 
-    public function _set($individu)
+    public function _set($enquete_individu_traitement)
     {
         return array(
-            'menage_id'         =>      $individu['menage_id'],
-            'Nom'               =>      $individu['Nom'],                      
-            'DateNaissance'     =>      $individu['DateNaissance'],                      
-            'Activite'          =>      $individu['Activite'],                      
-            'travailleur'       =>      $individu['travailleur']                      
+            'id_individu'          =>      $enquete_individu_traitement['id_individu'],
+            'id_lien_parente'         =>      $enquete_individu_traitement['id_lien_parente'],                       
+            'id_handicap_visuel'           =>      $enquete_individu_traitement['id_handicap_visuel'],                       
+            'id_handicap_parole'    =>      $enquete_individu_traitement['id_handicap_parole'],                       
+            'id_handicap_auditif'     =>      $enquete_individu_traitement['id_handicap_auditif'],                       
+            'id_handicap_mental'    =>      $enquete_individu_traitement['id_handicap_mental'],                       
+            'id_handicap_moteur'     =>      $enquete_individu_traitement['id_handicap_moteur']           
         );
     }
 
@@ -69,20 +71,15 @@ class Individu_model extends CI_Model
         }                 
     }
 
-    public function findAllByMenage($menage_id)
+    public function findAllByindividu($id_individu)
     {
-        $result =  $this->db->select('*')
-                        ->from($this->table)
-                        ->order_by('id')
-                        ->where("menage_id", $menage_id)
-                        ->get()
-                        ->result();
-        if($result)
-        {
-            return $result;
-        }else{
-            return null;
-        }                 
+        
+        $this->db->where("id_individu", $id_individu);
+        $q = $this->db->get($this->table);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return null;  
     }
 
     public function findById($id)

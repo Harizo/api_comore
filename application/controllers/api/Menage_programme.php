@@ -137,7 +137,7 @@ class Menage_programme extends REST_Controller {
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
-                        'response' => 1,
+                        'response' => $update,
                         'message' => 'Update data success'
                             ], REST_Controller::HTTP_OK);
                 } else {

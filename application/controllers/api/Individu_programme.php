@@ -4,59 +4,67 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 require APPPATH . '/libraries/REST_Controller.php';
 
-class Enquete_menage_traitement extends REST_Controller {
+class Individu_programme extends REST_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->load->model('enquete_menage_traitement_model', 'EnquetemenageManager');
+        $this->load->model('individu_programme_model', 'EnqueteindividuManager');
+        $this->load->model('individu_model', 'individuManager');
     }
 
     public function index_get() {
         $id = $this->get('id');
 
         $cle_etrangere = $this->get('cle_etrangere');
+        $id_programme = $this->get('id_programme');
         $data = array() ;
         if ($cle_etrangere) 
         {
-            $enquete_menage_traitement = $this->EnquetemenageManager->findAllByMenage($cle_etrangere);
+            $individu_programme = $this->EnqueteindividuManager->findAllByindividu($cle_etrangere);
 
             
 
-            if ($enquete_menage_traitement) 
+            if ($individu_programme) 
             {
-                $data['id'] = ($enquete_menage_traitement->id);
-                $data['id_menage'] = ($enquete_menage_traitement->id_menage);
-                $data['bien_equipement'] = unserialize($enquete_menage_traitement->bien_equipement);
-                $data['revetement_mur'] = unserialize($enquete_menage_traitement->revetement_mur);
-                $data['revetement_sol'] = unserialize($enquete_menage_traitement->revetement_sol);
-                $data['revetement_toit'] = unserialize($enquete_menage_traitement->revetement_toit);
-                $data['source_eau'] = unserialize($enquete_menage_traitement->source_eau);
-                $data['toilette'] = ($enquete_menage_traitement->toilette);
-                $data['type_culture'] = unserialize($enquete_menage_traitement->type_culture);
-                $data['type_elevage'] = unserialize($enquete_menage_traitement->type_elevage);
+                $data['id'] = ($individu_programme->id);
+                $data['id_individu'] = ($individu_programme->id_individu);
+                $data['id_programme'] = unserialize($individu_programme->id_programme);
+                
             }
         }
         else
         {
-            if ($id) {
-               
-                $data = $this->EnquetemenageManager->findById($id);
-                /*$data['id'] = $Enquetemenage->id;
-                $data['code'] = $Enquetemenage->code;
-                $data['libelle'] = $Enquetemenage->libelle;*/
-                
-            } else {
-                $data = $this->EnquetemenageManager->findAll();
-                /*if ($Enquetemenage) {
-                    foreach ($Enquetemenage as $key => $value) {
-                        
+            if ($id_programme) 
+            {
+                $id_prog = '"'.$id_programme.'"' ;
+                $list_individu_programme = $this->EnqueteindividuManager->findAllByProgramme($id_prog);
+                if ($list_individu_programme) 
+                {
+                    foreach ($list_individu_programme as $key => $value) 
+                    {
                         $data[$key]['id'] = $value->id;
-                        $data[$key]['code'] = $value->code;
-                        $data[$key]['libelle'] = $value->libelle;
-                        
-                    };
-                } else
-                    $data = array();*/
+                        $data[$key]['NomInscrire'] = ($value->NomInscrire);
+                        $data[$key]['PersonneInscription'] = ($value->PersonneInscription);
+                        $data[$key]['AgeInscrire'] = ($value->AgeInscrire);
+                        $data[$key]['Addresse'] = ($value->Addresse);
+                        $data[$key]['NumeroEnregistrement'] = ($value->NumeroEnregistrement);
+                       // $data['id_individu'] = ($individu_programme->id_individu);
+                        $data[$key]['id_programme'] = ($id_programme);
+                        //$data[$key]['individu'] = $this->individuManager->findById($value->id_individu);
+                       
+                    }
+                }
+            }
+            else
+            {
+                if ($id) 
+                {
+                    $data = $this->EnqueteindividuManager->findById($id);
+                } 
+                else 
+                {
+                    $data = $this->EnqueteindividuManager->findAll();                   
+                }
             }
         }
             
@@ -83,15 +91,8 @@ class Enquete_menage_traitement extends REST_Controller {
             if ($id == 0) 
             {
                 $data = array(
-                    'id_menage' => $this->post('id_menage'),
-                    'source_eau' => serialize($this->post('source_eau')),
-                    'toilette' => $this->post('toilette'),
-                    'bien_equipement' => serialize($this->post('bien_equipement')),
-                    'revetement_sol' => serialize($this->post('revetement_sol')),
-                    'revetement_toit' => serialize($this->post('revetement_toit')),
-                    'revetement_mur' => serialize($this->post('revetement_mur')),
-                    'type_culture' => serialize($this->post('type_culture')),
-                    'type_elevage' => serialize($this->post('type_elevage'))
+                    'id_individu' => $this->post('id_individu'),
+                    'id_programme' => serialize($this->post('id_programme'))
                 );               
                 if (!$data) 
                 {
@@ -102,7 +103,7 @@ class Enquete_menage_traitement extends REST_Controller {
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
 
-                $dataId = $this->EnquetemenageManager->add($data);
+                $dataId = $this->EnqueteindividuManager->add($data);
 
                 if (!is_null($dataId)) 
                 {
@@ -122,15 +123,8 @@ class Enquete_menage_traitement extends REST_Controller {
             else 
             {
                 $data = array(
-                    'id_menage' => $this->post('id_menage'),
-                    'source_eau' => serialize($this->post('source_eau')),
-                    'toilette' => $this->post('toilette'),
-                    'bien_equipement' => serialize($this->post('bien_equipement')),
-                    'revetement_sol' => serialize($this->post('revetement_sol')),
-                    'revetement_toit' => serialize($this->post('revetement_toit')),
-                    'revetement_mur' => serialize($this->post('revetement_mur')),
-                    'type_culture' => serialize($this->post('type_culture')),
-                    'type_elevage' => serialize($this->post('type_elevage'))
+                    'id_individu' => $this->post('id_individu'),
+                    'id_programme' => serialize($this->post('id_programme'))
                 );                 
                 if (!$data || !$id) {
                     $this->response([
@@ -139,7 +133,7 @@ class Enquete_menage_traitement extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-                $update = $this->EnquetemenageManager->update($id, $data);              
+                $update = $this->EnqueteindividuManager->update($id, $data);              
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
@@ -163,7 +157,7 @@ class Enquete_menage_traitement extends REST_Controller {
             'message' => 'No request found'
                 ], REST_Controller::HTTP_BAD_REQUEST);
             }
-            $delete = $this->EnquetemenageManager->delete($id);          
+            $delete = $this->EnqueteindividuManager->delete($id);          
             if (!is_null($delete)) {
                 $this->response([
                     'status' => TRUE,
