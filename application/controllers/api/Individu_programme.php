@@ -4,12 +4,11 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 require APPPATH . '/libraries/REST_Controller.php';
 
-class Menage_programme extends REST_Controller {
+class Individu_programme extends REST_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->load->model('menage_programme_model', 'EnquetemenageManager');
-        $this->load->model('menage_model', 'menageManager');
+        $this->load->model('individu_programme_model', 'IndividuprogrammeManager');
     }
 
     public function index_get() {
@@ -21,15 +20,15 @@ class Menage_programme extends REST_Controller {
         $data = array() ;
         if ($cle_etrangere) 
         {
-            $menage_programme = $this->EnquetemenageManager->findAllByMenage($cle_etrangere);
+            $individu_programme = $this->IndividuprogrammeManager->findAllByIndividu($cle_etrangere);
 
             
 
-            if ($menage_programme) 
+            if ($individu_programme) 
             {
-                $data['id'] = ($menage_programme->id);
-                $data['id_menage'] = ($menage_programme->id_menage);
-                $data['id_programme'] = unserialize($menage_programme->id_programme);
+                $data['id'] = ($individu_programme->id);
+                $data['id_individu'] = ($individu_programme->id_individu);
+                $data['id_programme'] = unserialize($individu_programme->id_programme);
                 
             }
         }
@@ -38,21 +37,21 @@ class Menage_programme extends REST_Controller {
             if ($id_programme && $id_village) 
 			{ 
                 $id_prog = '"%'.$id_programme.'%"' ;
-                $list_menage_programme = $this->EnquetemenageManager->findAllByProgrammeAndVillage($id_prog,$id_village);
-                if ($list_menage_programme) 
+                $list_individu_programme = $this->IndividuprogrammeManager->findAllByProgrammeAndVillage($id_prog,$id_village);
+                if ($list_individu_programme) 
                 {
-                    foreach ($list_menage_programme as $key => $value) 
+                    foreach ($list_individu_programme as $key => $value) 
                     {
                         $data[$key]['id'] = $value->id;
-                        $data[$key]['id_menage'] = ($value->id_menage);
-                        $data[$key]['nomchefmenage'] = ($value->nomchefmenage);
-                        $data[$key]['PersonneInscription'] = ($value->PersonneInscription);
-                        $data[$key]['AgeInscrire'] = ($value->AgeInscrire);
-                        $data[$key]['Addresse'] = ($value->Addresse);
-                        $data[$key]['NumeroEnregistrement'] = ($value->NumeroEnregistrement);
-                        $data[$key]['id_programme'] = ($id_programme);
-                        $data[$key]['detail_suivi_menage'] = array();
+                        $data[$key]['id_individu'] = $value->id_individu;
+                        $data[$key]['Nom'] = $value->Nom;
+                        $data[$key]['nomchefmenage'] = $value->nomchefmenage;
+                        $data[$key]['Addresse'] = $value->Addresse;
+                        $data[$key]['NumeroEnregistrement'] = $value->NumeroEnregistrement;
+                        $data[$key]['DateNaissance'] = $value->DateNaissance;
+                        $data[$key]['id_programme'] = $id_programme;
                         $data[$key]['detail_charge'] = 0;
+                        $data[$key]['detail_suivi_individu'] = array();
                     }
                 }				
 			} 
@@ -60,21 +59,18 @@ class Menage_programme extends REST_Controller {
             if ($id_programme) 
             {
                 $id_prog = '"'.$id_programme.'"' ;
-                $list_menage_programme = $this->EnquetemenageManager->findAllByProgramme($id_prog);
-                if ($list_menage_programme) 
+                $list_individu_programme = $this->IndividuprogrammeManager->findAllByProgramme($id_prog);
+                if ($list_individu_programme) 
                 {
-                    foreach ($list_menage_programme as $key => $value) 
+                    foreach ($list_individu_programme as $key => $value) 
                     {
                         $data[$key]['id'] = $value->id;
-                        $data[$key]['NomInscrire'] = ($value->NomInscrire);
-                        $data[$key]['PersonneInscription'] = ($value->PersonneInscription);
-                        $data[$key]['AgeInscrire'] = ($value->AgeInscrire);
-                        $data[$key]['Addresse'] = ($value->Addresse);
-                        $data[$key]['NumeroEnregistrement'] = ($value->NumeroEnregistrement);
-                       // $data['id_menage'] = ($menage_programme->id_menage);
-                        $data[$key]['id_programme'] = ($id_programme);
-                        //$data[$key]['menage'] = $this->menageManager->findById($value->id_menage);
-                       
+                        $data[$key]['id_individu'] = $value->id_individu;
+                        $data[$key]['Nom'] = $value->Nom;
+                        $data[$key]['Addresse'] = $value->Addresse;
+                        $data[$key]['NumeroEnregistrement'] = $value->NumeroEnregistrement;
+                        $data[$key]['DateNaissance'] = $value->DateNaissance;
+                        $data[$key]['id_programme'] = $id_programme;
                     }
                 }
             }
@@ -82,11 +78,11 @@ class Menage_programme extends REST_Controller {
             {
                 if ($id) 
                 {
-                    $data = $this->EnquetemenageManager->findById($id);
+                    $data = $this->IndividuprogrammeManager->findById($id);
                 } 
                 else 
                 {
-                    $data = $this->EnquetemenageManager->findAll();                   
+                    $data = $this->IndividuprogrammeManager->findAll();                   
                 }
             }
         }
@@ -114,7 +110,7 @@ class Menage_programme extends REST_Controller {
             if ($id == 0) 
             {
                 $data = array(
-                    'id_menage' => $this->post('id_menage'),
+                    'id_individu' => $this->post('id_individu'),
                     'id_programme' => serialize($this->post('id_programme'))
                 );               
                 if (!$data) 
@@ -126,7 +122,7 @@ class Menage_programme extends REST_Controller {
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
 
-                $dataId = $this->EnquetemenageManager->add($data);
+                $dataId = $this->IndividuprogrammeManager->add($data);
 
                 if (!is_null($dataId)) 
                 {
@@ -146,7 +142,7 @@ class Menage_programme extends REST_Controller {
             else 
             {
                 $data = array(
-                    'id_menage' => $this->post('id_menage'),
+                    'id_individu' => $this->post('id_individu'),
                     'id_programme' => serialize($this->post('id_programme'))
                 );                 
                 if (!$data || !$id) {
@@ -156,7 +152,7 @@ class Menage_programme extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-                $update = $this->EnquetemenageManager->update($id, $data);              
+                $update = $this->IndividuprogrammeManager->update($id, $data);              
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
@@ -180,7 +176,7 @@ class Menage_programme extends REST_Controller {
             'message' => 'No request found'
                 ], REST_Controller::HTTP_BAD_REQUEST);
             }
-            $delete = $this->EnquetemenageManager->delete($id);          
+            $delete = $this->IndividuprogrammeManager->delete($id);          
             if (!is_null($delete)) {
                 $this->response([
                     'status' => TRUE,

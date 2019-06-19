@@ -1,13 +1,13 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Menage_programme_model extends CI_Model
+class Individu_programme_model extends CI_Model
 {
-    protected $table = 'menage_programme';
+    protected $table = 'individu_programme';
 
 
-    public function add($menage_programme)
+    public function add($individu_programme)
     {
-        $this->db->set($this->_set($menage_programme))
+        $this->db->set($this->_set($individu_programme))
                             ->insert($this->table);
         if($this->db->affected_rows() === 1)
         {
@@ -18,9 +18,9 @@ class Menage_programme_model extends CI_Model
     }
 
 
-    public function update($id, $menage_programme)
+    public function update($id, $individu_programme)
     {
-        $this->db->set($this->_set($menage_programme))
+        $this->db->set($this->_set($individu_programme))
                             ->where('id', (int) $id)
                             ->update($this->table);
         if($this->db->affected_rows() === 1)
@@ -31,11 +31,11 @@ class Menage_programme_model extends CI_Model
         }                      
     }
 
-    public function _set($menage_programme)
+    public function _set($individu_programme)
     {
         return array(
-            'id_menage'          =>      $menage_programme['id_menage'],
-            'id_programme'         =>      $menage_programme['id_programme']                      
+            'id_individu'          =>      $individu_programme['id_individu'],
+            'id_programme'         =>      $individu_programme['id_programme']                      
         );
     }
 
@@ -68,17 +68,17 @@ class Menage_programme_model extends CI_Model
 
     public function findAllByProgramme($id_programmes)
     {
-        $result =  $this->db->select('menage.id as id_menage,
-                                        menage_programme.id as id,
-                                        menage.NomInscrire as NomInscrire,
-                                        menage.PersonneInscription as PersonneInscription,
-                                        menage.AgeInscrire as AgeInscrire,
-                                        menage.Addresse as Addresse,
-                                        menage.NumeroEnregistrement as NumeroEnregistrement
+        $result =  $this->db->select('individu.id as id_individu,
+                                        individu_programme.id_programme as id_programme,
+                                        individu_programme.id as id,
+                                        individu.Nom as Nom,
+                                        individu.DateNaissance as DateNaissance,
+										menage.NumeroEnregistrement as NumeroEnregistrement,
+										menage.Addresse as Addresse
                                         ')
                         ->from($this->table)
-                        ->join('menage', 'menage.id = menage_programme.id_menage')
-                    //    ->order_by('id')
+                        ->join('individu', 'individu.id = individu_programme.id_individu')
+                        ->join('menage', 'individu.menage_id = menage.id')
                         ->like('id_programme', $id_programmes)
                         ->get()
                         ->result();
@@ -90,10 +90,10 @@ class Menage_programme_model extends CI_Model
         }                  
     }
 
-    public function findAllByMenage($id_menage)
+    public function findAllByIndividu($id_individu)
     {
         
-        $this->db->where("id_menage", $id_menage);
+        $this->db->where("id_individu", $id_individu);
         $q = $this->db->get($this->table);
         if ($q->num_rows() > 0) {
             return $q->row();
@@ -112,9 +112,10 @@ class Menage_programme_model extends CI_Model
     }
     public function findAllByProgrammeAndVillage($id_programmes,$id_village)
     {
-		$requete="select mp.id,mp.id_menage,m.nomchefmenage,m.PersonneInscription,m.AgeInscrire,m.Addresse,m.NumeroEnregistrement"
-				." from menage_programme as mp"
-				." left outer join menage as m on m.id=mp.id_menage"
+		$requete="select mp.id,mp.id_individu,i.Nom,i.DateNaissance,i.menage_id,m.NumeroEnregistrement,m.Addresse,m.nomchefmenage"
+				." from individu_programme as mp"
+				." left outer join individu as i on i.id=mp.id_individu"
+				." left outer join menage as m on m.id=i.menage_id"
 				." left outer join see_village as v on v.id=m.village_id"
                 ." where mp.id_programme like ".$id_programmes
 				." and v.id=".$id_village;	
