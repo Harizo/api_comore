@@ -29,10 +29,7 @@ class Individu_programme extends REST_Controller {
             $individu_programme = $this->IndividuprogrammeManager->findAllByIndividu($cle_etrangere);
 
         $data = array() ;
-        if ($cle_etrangere) 
-        {
-            $individu_programme = $this->EnqueteindividuManager->findAllByindividu($cle_etrangere);
-
+        
 
             if ($individu_programme) 
             {
@@ -72,11 +69,6 @@ class Individu_programme extends REST_Controller {
                 $id_prog = '"'.$id_programme.'"' ;
                 $list_individu_programme = $this->IndividuprogrammeManager->findAllByProgramme($id_prog);
 
-            if ($id_programme) 
-            {
-                $id_prog = '"'.$id_programme.'"' ;
-                $list_individu_programme = $this->EnqueteindividuManager->findAllByProgramme($id_prog);
-
                 if ($list_individu_programme) 
                 {
                     foreach ($list_individu_programme as $key => $value) 
@@ -114,13 +106,8 @@ class Individu_programme extends REST_Controller {
                 {
                     $data = $this->IndividuprogrammeManager->findAll();                   
 
-                    $data = $this->EnqueteindividuManager->findById($id);
                 } 
-                else 
-                {
-                    $data = $this->EnqueteindividuManager->findAll();                   
-
-                }
+               
             }
         }
             
@@ -162,7 +149,6 @@ class Individu_programme extends REST_Controller {
 
                 $dataId = $this->IndividuprogrammeManager->add($data);
 
-                $dataId = $this->EnqueteindividuManager->add($data);
 
 
                 if (!is_null($dataId)) 
@@ -193,14 +179,8 @@ class Individu_programme extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-
-                $update = $this->IndividuprogrammeManager->update($id, $data);              
-                if(!is_null($update)){
-                    $this->response([
-                        'status' => TRUE, 
-                        'response' => 1,
-
-                $update = $this->EnqueteindividuManager->update($id, $data);              
+              $update = $this->IndividuprogrammeManager->update($id, $data);
+                
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
@@ -225,8 +205,7 @@ class Individu_programme extends REST_Controller {
             'message' => 'No request found'
                 ], REST_Controller::HTTP_BAD_REQUEST);
             }
-
-            $delete = $this->IndividuprogrammeManager->delete($id);          
+       
 
             $delete = $this->EnqueteindividuManager->delete($id);          
 
