@@ -34,8 +34,14 @@ class Menage_model extends CI_Model
     public function _set($menage)
     {
         return array(
-            'code'       =>      $menage['code'],
-            'libelle'    =>      $menage['libelle']                       
+            'DateInscription'       =>      $menage['DateInscription'],
+            'village_id'            =>      $menage['village_id'],                       
+            'NumeroEnregistrement'  =>      $menage['NumeroEnregistrement'],                       
+            'NomInscrire'           =>      $menage['NomInscrire'],                       
+            'PersonneInscription'   =>      $menage['PersonneInscription'],                       
+            'AgeInscrire'           =>      $menage['AgeInscrire'],                       
+            'SexeChefMenage'        =>      $menage['SexeChefMenage'],                       
+            'Addresse'               =>      $menage['Addresse']                      
         );
     }
 
@@ -80,6 +86,17 @@ class Menage_model extends CI_Model
         }else{
             return null;
         }                 
+    }
+
+    public function find_max_id()
+    {
+        $q =  $this->db->select_max('id')
+                        ->from($this->table)
+                        ->get();
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return null;              
     }
 
     public function findById($id)

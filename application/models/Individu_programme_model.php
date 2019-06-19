@@ -69,16 +69,16 @@ class Individu_programme_model extends CI_Model
     public function findAllByProgramme($id_programmes)
     {
         $result =  $this->db->select('individu.id as id_individu,
-                                        individu_programme.id_programme as id_programme,
                                         individu_programme.id as id,
                                         individu.Nom as Nom,
                                         individu.DateNaissance as DateNaissance,
-										menage.NumeroEnregistrement as NumeroEnregistrement,
-										menage.Addresse as Addresse
+                                        individu.Activite as Activite,
+                                        individu.aptitude as aptitude,
+                                        individu.travailleur as travailleur
                                         ')
                         ->from($this->table)
                         ->join('individu', 'individu.id = individu_programme.id_individu')
-                        ->join('menage', 'individu.menage_id = menage.id')
+                    //    ->order_by('id')
                         ->like('id_programme', $id_programmes)
                         ->get()
                         ->result();
@@ -90,7 +90,7 @@ class Individu_programme_model extends CI_Model
         }                  
     }
 
-    public function findAllByIndividu($id_individu)
+    public function findAllByindividu($id_individu)
     {
         
         $this->db->where("id_individu", $id_individu);

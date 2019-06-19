@@ -17,31 +17,29 @@ class Menage extends REST_Controller {
 
         $cle_etrangere = $this->get('cle_etrangere');
 
-        if ($cle_etrangere) 
+        $max_id = $this->get('max_id');
+
+        if ($max_id == 1) 
         {
-            $data = $this->menageManager->findAllByVillage($cle_etrangere);
+            $data = $this->menageManager->find_max_id();
         }
         else
         {
-            if ($id) {
-               
-                $data = $this->menageManager->findById($id);
-                /*$data['id'] = $menage->id;
-                $data['code'] = $menage->code;
-                $data['libelle'] = $menage->libelle;*/
-                
-            } else {
-                $data = $this->menageManager->findAll();
-                /*if ($menage) {
-                    foreach ($menage as $key => $value) {
-                        
-                        $data[$key]['id'] = $value->id;
-                        $data[$key]['code'] = $value->code;
-                        $data[$key]['libelle'] = $value->libelle;
-                        
-                    };
-                } else
-                    $data = array();*/
+            if ($cle_etrangere) 
+            {
+                $data = $this->menageManager->findAllByVillage($cle_etrangere);
+            }
+            else
+            {
+                if ($id) {
+                   
+                    $data = $this->menageManager->findById($id);
+                    
+                    
+                } else {
+                    $data = $this->menageManager->findAll();
+                   
+                }
             }
         }
             
@@ -65,9 +63,16 @@ class Menage extends REST_Controller {
         $supprimer = $this->post('supprimer') ;
         if ($supprimer == 0) {
             if ($id == 0) {
+               
                 $data = array(
-                    'code' => $this->post('code'),
-                    'libelle' => $this->post('libelle')
+                    'DateInscription' => $this->post('DateInscription'),
+                    'village_id' => $this->post('village_id'),
+                    'NumeroEnregistrement' => $this->post('NumeroEnregistrement'),
+                    'NomInscrire' => $this->post('NomInscrire'),
+                    'PersonneInscription' => $this->post('PersonneInscription'),
+                    'AgeInscrire' => $this->post('AgeInscrire'),
+                    'SexeChefMenage' => $this->post('SexeChefMenage'),
+                    'Addresse' => $this->post('Addresse')
                 );               
                 if (!$data) {
                     $this->response([
@@ -92,8 +97,14 @@ class Menage extends REST_Controller {
                 }
             } else {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'libelle' => $this->post('libelle')
+                    'DateInscription' => $this->post('DateInscription'),
+                    'village_id' => $this->post('village_id'),
+                    'NumeroEnregistrement' => $this->post('NumeroEnregistrement'),
+                    'NomInscrire' => $this->post('NomInscrire'),
+                    'PersonneInscription' => $this->post('PersonneInscription'),
+                    'AgeInscrire' => $this->post('AgeInscrire'),
+                    'SexeChefMenage' => $this->post('SexeChefMenage'),
+                    'Addresse' => $this->post('Addresse')
                 );              
                 if (!$data || !$id) {
                     $this->response([

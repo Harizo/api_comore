@@ -10,7 +10,9 @@ class Region extends REST_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('region_model', 'RegionManager');
-        $this->load->model('site_model', 'SiteManager');
+       // $this->load->model('site_model', 'SiteManager');
+        $this->load->model('ile_model', 'ileManager');
+        $this->load->model('programme_model', 'ProgrammeManager');
     }
 
     public function index_get() {
@@ -25,18 +27,23 @@ class Region extends REST_Controller {
                 $data = array();
                 $region = $this->RegionManager->findById($id);
                 $data['id'] = $region->id;
-                $data['code'] = $region->code;
-                $data['nom'] = $region->nom;
+                $data['Code'] = $region->Code;
+                $data['Region'] = $region->Region;
                 
             } else {
                 $region = $this->RegionManager->findAll();
-                if ($region) {
-                    foreach ($region as $key => $value) {
-                        
+                if ($region)
+                {
+                    foreach ($region as $key => $value)
+                    {
+                        $ile = $this->ileManager->findById($value->ile_id);
+                        $prog = $this->ProgrammeManager->findById($value->programme_id);
+
                         $data[$key]['id'] = $value->id;
-                        $data[$key]['code'] = $value->code;
-                        $data[$key]['nom'] = $value->nom;
-                        
+                        $data[$key]['Code'] = $value->Code;
+                        $data[$key]['Region'] = $value->Region;
+                        $data[$key]['ile'] = $ile;
+                        $data[$key]['programme'] = $prog[0];
                     };
                 } else
                     $data = array();
@@ -62,8 +69,10 @@ class Region extends REST_Controller {
         if ($supprimer == 0) {
             if ($id == 0) {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'nom' => $this->post('nom')
+                    'Code' => $this->post('Code'),
+                    'Region' => $this->post('Region'),
+                    'ile_id' => $this->post('ile_id'),
+                    'programme_id' => $this->post('programme_id')
                 );               
                 if (!$data) {
                     $this->response([
@@ -88,8 +97,10 @@ class Region extends REST_Controller {
                 }
             } else {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'nom' => $this->post('nom')
+                    'Code' => $this->post('Code'),
+                    'Region' => $this->post('Region'),
+                    'ile_id' => $this->post('ile_id'),
+                    'programme_id' => $this->post('programme_id')
                 );              
                 if (!$data || !$id) {
                     $this->response([

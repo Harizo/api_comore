@@ -25,9 +25,10 @@ class Commune_model extends CI_Model {
     }
     public function _set($commune) {
         return array(
-            'code'           =>      $commune['code'],
-            'nom'            =>      $commune['nom'],
-            'district_id'    =>      $commune['district_id']                       
+            'Code'           =>      $commune['Code'],
+            'Commune'            =>      $commune['Commune'],
+            'programme_id'    =>      $commune['programme_id'],
+            'region_id'    =>      $commune['region_id']                       
         );
     }
     public function delete($id) {
@@ -41,7 +42,7 @@ class Commune_model extends CI_Model {
     public function findAll() {
         $result =  $this->db->select('*')
                         ->from($this->table)
-                        ->order_by('nom')
+                        ->order_by('Code')
                         ->get()
                         ->result();
         if($result)
