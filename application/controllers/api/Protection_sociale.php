@@ -17,6 +17,7 @@ class Protection_sociale extends REST_Controller {
     public function index_get() {
         $id = $this->get('id');
 		$data = array();
+        $taiza='';
 		if ($id) {
 			$tmp = $this->Protection_socialeManager->findById($id);
 			if($tmp) {
@@ -32,6 +33,7 @@ class Protection_sociale extends REST_Controller {
                     $data['ile'] = $ile;
                     $data['vil'] = $vil;
                     $data['programme'] = $prog[0];
+                    $taiza='taoid';
 			}
 		} else {			
 			$tmp = $this->Protection_socialeManager->findAll();
@@ -48,8 +50,9 @@ class Protection_sociale extends REST_Controller {
                     $data[$key]['NumeroTelephone'] = $value->NumeroTelephone;
                     $data[$key]['Representant'] = $value->Representant;
                     $data[$key]['ile'] = $ile;
-                    $data[$key]['vile'] = $vile;
+                    $data[$key]['vile'] = $vil;
                     $data[$key]['programme'] = $prog[0];
+                    $taiza='findall';
 				}	
 			}
 		}
@@ -57,6 +60,7 @@ class Protection_sociale extends REST_Controller {
             $this->response([
                 'status' => TRUE,
                 'response' => $data,
+                'taiz' => $taiza,
                 'message' => 'Get data success',
             ], REST_Controller::HTTP_OK);
         } else {

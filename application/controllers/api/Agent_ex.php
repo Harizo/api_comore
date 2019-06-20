@@ -16,10 +16,12 @@ class Agent_ex extends REST_Controller {
     public function index_get() {
         $id = $this->get('id');
 		$data = array();
+        $taiza='';
 		if ($id) {
 			$tmp = $this->AgentexManager->findById($id);
 			if($tmp) {
 				$data=$tmp;
+                $taiza='taoid';
 			}
 		} else {			
 			$tmp = $this->AgentexManager->findAll();
@@ -30,13 +32,14 @@ class Agent_ex extends REST_Controller {
                     $ile = $this->ileManager->findById($value->ile_id);
                     $prog = $this->ProgrammeManager->findById($value->programme_id);
                     
-                    $data['id'] = $value->id;
-                    $data['Code'] = $value->Code;
-                    $data['Nom'] = $value->Nom;
-                    $data['Contact'] = $value->Contact;
-                    $data['Representant'] = $value->Representant;
-                    $data['ile'] = $ile;
-                    $data['programme'] = $prog[0];
+                    $data[$key]['id'] = $value->id;
+                    $data[$key]['Code'] = $value->Code;
+                    $data[$key]['Nom'] = $value->Nom;
+                    $data[$key]['Contact'] = $value->Contact;
+                    $data[$key]['Representant'] = $value->Representant;
+                    $data[$key]['ile'] = $ile;
+                    $data[$key]['programme'] = $prog[0];
+                     $taiza='findall';
                 }
                 
 			}
@@ -45,6 +48,7 @@ class Agent_ex extends REST_Controller {
             $this->response([
                 'status' => TRUE,
                 'response' => $data,
+                'taiz' => $taiza,
                 'message' => 'Get data success',
             ], REST_Controller::HTTP_OK);
         } else {
