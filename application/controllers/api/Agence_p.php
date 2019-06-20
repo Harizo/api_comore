@@ -21,14 +21,14 @@ class Agence_p extends REST_Controller {
 			if($tmp) {
 				    $ile = $this->ileManager->findById($value->ile_id);
                     $prog = $this->ProgrammeManager->findById($value->programme_id);
-                    $data[$key]['id'] = $value->id;
-                    $data[$key]['Code'] = $value->Code;
-                    $data[$key]['Nom'] = $value->Nom;
-                    $data[$key]['Contact'] = $value->Contact;
-                    $data[$key]['Telephone'] = $value->Telephone;
-                    $data[$key]['Representant'] = $value->Representant;
-                    $data[$key]['ile'] = $ile;
-                    $data[$key]['programme'] = $prog[0];
+                    $data['id'] = $value->id;
+                    $data['Code'] = $value->Code;
+                    $data['Nom'] = $value->Nom;
+                    $data['Contact'] = $value->Contact;
+                    $data['Telephone'] = $value->Telephone;
+                    $data['Representant'] = $value->Representant;
+                    $data['ile'] = $ile;
+                    $data['programme'] = $prog[0];
 			}
 		} else {			
 			$tmp = $this->Agence_pManager->findAll();
