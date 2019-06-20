@@ -37,9 +37,9 @@ class Menage_model extends CI_Model
             'DateInscription'       =>      $menage['DateInscription'],
             'village_id'            =>      $menage['village_id'],                       
             'NumeroEnregistrement'  =>      $menage['NumeroEnregistrement'],                       
-            'NomInscrire'           =>      $menage['NomInscrire'],                       
+            'nomchefmenage'           =>      $menage['nomchefmenage'],                       
             'PersonneInscription'   =>      $menage['PersonneInscription'],                       
-            'AgeInscrire'           =>      $menage['AgeInscrire'],                       
+            'agechefdemenage'           =>      $menage['agechefdemenage'],                       
             'SexeChefMenage'        =>      $menage['SexeChefMenage'],                       
             'Addresse'               =>      $menage['Addresse']                      
         );

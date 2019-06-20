@@ -68,9 +68,9 @@ class Menage extends REST_Controller {
                     'DateInscription' => $this->post('DateInscription'),
                     'village_id' => $this->post('village_id'),
                     'NumeroEnregistrement' => $this->post('NumeroEnregistrement'),
-                    'NomInscrire' => $this->post('NomInscrire'),
+                    'nomchefmenage' => $this->post('nomchefmenage'),
                     'PersonneInscription' => $this->post('PersonneInscription'),
-                    'AgeInscrire' => $this->post('AgeInscrire'),
+                    'agechefdemenage' => $this->post('agechefdemenage'),
                     'SexeChefMenage' => $this->post('SexeChefMenage'),
                     'Addresse' => $this->post('Addresse')
                 );               
@@ -100,9 +100,9 @@ class Menage extends REST_Controller {
                     'DateInscription' => $this->post('DateInscription'),
                     'village_id' => $this->post('village_id'),
                     'NumeroEnregistrement' => $this->post('NumeroEnregistrement'),
-                    'NomInscrire' => $this->post('NomInscrire'),
+                    'nomchefmenage' => $this->post('nomchefmenage'),
                     'PersonneInscription' => $this->post('PersonneInscription'),
-                    'AgeInscrire' => $this->post('AgeInscrire'),
+                    'agechefdemenage' => $this->post('agechefdemenage'),
                     'SexeChefMenage' => $this->post('SexeChefMenage'),
                     'Addresse' => $this->post('Addresse')
                 );              

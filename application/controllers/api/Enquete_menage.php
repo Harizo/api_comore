@@ -45,8 +45,7 @@ class Enquete_menage extends REST_Controller {
         $nom_table = $this->post('nom_table') ;
         $supprimer = $this->post('supprimer') ;
 		$data = array(
-			'description' => $this->post('description'),
-			'code' => $this->post('code'),
+			'description' => $this->post('description')
 		);               
         if ($supprimer == 0) {
             if ($id == 0) {

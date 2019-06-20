@@ -11,7 +11,6 @@ class Individu_programme extends REST_Controller {
 
         $this->load->model('individu_programme_model', 'IndividuprogrammeManager');
 
-        $this->load->model('individu_programme_model', 'EnqueteindividuManager');
         $this->load->model('individu_model', 'individuManager');
 
     }
@@ -207,7 +206,7 @@ class Individu_programme extends REST_Controller {
             }
        
 
-            $delete = $this->EnqueteindividuManager->delete($id);          
+            $delete = $this->IndividuprogrammeManager->delete($id);          
 
             if (!is_null($delete)) {
                 $this->response([

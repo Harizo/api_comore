@@ -2,7 +2,7 @@
 
 class Utilisateurs_model extends CI_Model
 {
-    protected $table = 'see_user';
+    protected $table = 'utilisateur';
 
 
     public function add($utilisateurs)
@@ -96,12 +96,11 @@ class Utilisateurs_model extends CI_Model
         return array(
             'nom'                   =>      $utilisateurs['nom'],
             'prenom'                =>      $utilisateurs['prenom'],
-    /*        'sigle'                =>      $utilisateurs['sigle'],*/
             'email'                 =>      $utilisateurs['email'],
             'password'              =>      $utilisateurs['password'],
             'enabled'               =>      $utilisateurs['enabled'],
             'token'                 =>      $utilisateurs['token'],
-            'roles'                 =>      $utilisateurs['roles'],
+            'roles'                 =>      $utilisateurs['roles']
             
         );
     }
