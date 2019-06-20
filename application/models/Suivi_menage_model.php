@@ -1,13 +1,13 @@
 <?php  if ( ! defined('BASEPATH')) exit('No direct script access allowed');
 
-class Menage_programme_model extends CI_Model
+class Suivi_menage_model extends CI_Model
 {
-    protected $table = 'menage_programme';
+    protected $table = 'suivi_menage';
 
 
-    public function add($menage_programme)
+    public function add($suivi_menage)
     {
-        $this->db->set($this->_set($menage_programme))
+        $this->db->set($this->_set($suivi_menage))
                             ->insert($this->table);
         if($this->db->affected_rows() === 1)
         {
@@ -18,9 +18,9 @@ class Menage_programme_model extends CI_Model
     }
 
 
-    public function update($id, $menage_programme)
+    public function update($id, $suivi_menage)
     {
-        $this->db->set($this->_set($menage_programme))
+        $this->db->set($this->_set($suivi_menage))
                             ->where('id', (int) $id)
                             ->update($this->table);
         if($this->db->affected_rows() === 1)
@@ -31,11 +31,17 @@ class Menage_programme_model extends CI_Model
         }                      
     }
 
-    public function _set($menage_programme)
+    public function _set($suivi_menage)
     {
         return array(
-            'id_menage'          =>      $menage_programme['id_menage'],
-            'id_programme'         =>      $menage_programme['id_programme']                      
+            'id_menage'         => $suivi_menage['id_menage'],
+            'id_partenaire'     => $suivi_menage['id_partenaire'] ,                     
+            'id_acteur'         => $suivi_menage['id_acteur'],                      
+            'id_programme'      => $suivi_menage['id_programme'],                      
+            'id_type_transfert' => $suivi_menage['id_type_transfert'],                      
+            'date_suivi'        => $suivi_menage['date_suivi'],                      
+            'montant'           => $suivi_menage['montant'],                      
+            'observation'       => $suivi_menage['observation'],                      
         );
     }
 
@@ -69,7 +75,7 @@ class Menage_programme_model extends CI_Model
     public function findAllByProgramme($id_programmes)
     {
         $result =  $this->db->select('menage.id as id_menage,
-                                        menage_programme.id as id,
+                                        suivi_menage.id as id,
                                         menage.NomInscrire as NomInscrire,
                                         menage.PersonneInscription as PersonneInscription,
                                         menage.AgeInscrire as AgeInscrire,
@@ -77,7 +83,7 @@ class Menage_programme_model extends CI_Model
                                         menage.NumeroEnregistrement as NumeroEnregistrement
                                         ')
                         ->from($this->table)
-                        ->join('menage', 'menage.id = menage_programme.id_menage')
+                        ->join('menage', 'menage.id = suivi_menage.id_menage')
                     //    ->order_by('id')
                         ->like('id_programme', $id_programmes)
                         ->get()
@@ -110,14 +116,15 @@ class Menage_programme_model extends CI_Model
         }
         return null;
     }
-    public function findAllByProgrammeAndVillage($id_programmes,$id_village)
+    public function findAllByProgrammeAndMenage($id_programmes,$id_menage)
     {
-		$requete="select mp.id,mp.id_menage,m.nomchefmenage,m.PersonneInscription,m.AgeInscrire,m.Addresse,m.NumeroEnregistrement"
-				." from menage_programme as mp"
-				." left outer join menage as m on m.id=mp.id_menage"
+		$requete="select sm.id,sm.id_menage,m.nomchefmenage,m.PersonneInscription,m.AgeInscrire,m.Addresse,m.NumeroEnregistrement,"
+				."sm.id_programme,sm.id_acteur,sm.id_partenaire,sm.date_suivi,sm.montant,sm.id_type_transfert,sm.observation"
+				." from suivi_menage as sm"
+				." left outer join menage as m on m.id=sm.id_menage"
 				." left outer join see_village as v on v.id=m.village_id"
-                ." where mp.id_programme like ".$id_programmes
-				." and v.id=".$id_village;	
+                ." where sm.id_programme like ".$id_programmes
+				." and sm.id_menage=".$id_menage;	
 				$result = $this->db->query($requete)->result();
         if($result)
         {

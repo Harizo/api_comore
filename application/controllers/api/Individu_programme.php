@@ -8,8 +8,12 @@ class Individu_programme extends REST_Controller {
 
     public function __construct() {
         parent::__construct();
+
+        $this->load->model('individu_programme_model', 'IndividuprogrammeManager');
+
         $this->load->model('individu_programme_model', 'EnqueteindividuManager');
         $this->load->model('individu_model', 'individuManager');
+
     }
 
     public function index_get() {
@@ -17,12 +21,15 @@ class Individu_programme extends REST_Controller {
 
         $cle_etrangere = $this->get('cle_etrangere');
         $id_programme = $this->get('id_programme');
+
+        $id_village = $this->get('id_village');
         $data = array() ;
         if ($cle_etrangere) 
         {
-            $individu_programme = $this->EnqueteindividuManager->findAllByindividu($cle_etrangere);
+            $individu_programme = $this->IndividuprogrammeManager->findAllByIndividu($cle_etrangere);
 
-            
+        $data = array() ;
+        
 
             if ($individu_programme) 
             {
@@ -34,15 +41,47 @@ class Individu_programme extends REST_Controller {
         }
         else
         {
-            if ($id_programme) 
-            {
-                $id_prog = '"'.$id_programme.'"' ;
-                $list_individu_programme = $this->EnqueteindividuManager->findAllByProgramme($id_prog);
+
+            if ($id_programme && $id_village) 
+			{ 
+                $id_prog = '"%'.$id_programme.'%"' ;
+                $list_individu_programme = $this->IndividuprogrammeManager->findAllByProgrammeAndVillage($id_prog,$id_village);
                 if ($list_individu_programme) 
                 {
                     foreach ($list_individu_programme as $key => $value) 
                     {
                         $data[$key]['id'] = $value->id;
+                        $data[$key]['id_individu'] = $value->id_individu;
+                        $data[$key]['Nom'] = $value->Nom;
+                        $data[$key]['nomchefmenage'] = $value->nomchefmenage;
+                        $data[$key]['Addresse'] = $value->Addresse;
+                        $data[$key]['NumeroEnregistrement'] = $value->NumeroEnregistrement;
+                        $data[$key]['DateNaissance'] = $value->DateNaissance;
+                        $data[$key]['id_programme'] = $id_programme;
+                        $data[$key]['detail_charge'] = 0;
+                        $data[$key]['detail_suivi_individu'] = array();
+                    }
+                }				
+			} 
+			else	
+            if ($id_programme) 
+            {
+                $id_prog = '"'.$id_programme.'"' ;
+                $list_individu_programme = $this->IndividuprogrammeManager->findAllByProgramme($id_prog);
+
+                if ($list_individu_programme) 
+                {
+                    foreach ($list_individu_programme as $key => $value) 
+                    {
+                        $data[$key]['id'] = $value->id;
+
+                        $data[$key]['id_individu'] = $value->id_individu;
+                        $data[$key]['Nom'] = $value->Nom;
+                        $data[$key]['Addresse'] = $value->Addresse;
+                        $data[$key]['NumeroEnregistrement'] = $value->NumeroEnregistrement;
+                        $data[$key]['DateNaissance'] = $value->DateNaissance;
+                        $data[$key]['id_programme'] = $id_programme;
+
                         $data[$key]['NomInscrire'] = ($value->NomInscrire);
                         $data[$key]['PersonneInscription'] = ($value->PersonneInscription);
                         $data[$key]['AgeInscrire'] = ($value->AgeInscrire);
@@ -52,6 +91,7 @@ class Individu_programme extends REST_Controller {
                         $data[$key]['id_programme'] = ($id_programme);
                         //$data[$key]['individu'] = $this->individuManager->findById($value->id_individu);
                        
+
                     }
                 }
             }
@@ -59,12 +99,15 @@ class Individu_programme extends REST_Controller {
             {
                 if ($id) 
                 {
-                    $data = $this->EnqueteindividuManager->findById($id);
+
+                    $data = $this->IndividuprogrammeManager->findById($id);
                 } 
                 else 
                 {
-                    $data = $this->EnqueteindividuManager->findAll();                   
-                }
+                    $data = $this->IndividuprogrammeManager->findAll();                   
+
+                } 
+               
             }
         }
             
@@ -103,7 +146,10 @@ class Individu_programme extends REST_Controller {
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
 
-                $dataId = $this->EnqueteindividuManager->add($data);
+
+                $dataId = $this->IndividuprogrammeManager->add($data);
+
+
 
                 if (!is_null($dataId)) 
                 {
@@ -133,11 +179,13 @@ class Individu_programme extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-                $update = $this->EnqueteindividuManager->update($id, $data);              
+              $update = $this->IndividuprogrammeManager->update($id, $data);
+                
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
                         'response' => $update,
+
                         'message' => 'Update data success'
                             ], REST_Controller::HTTP_OK);
                 } else {
@@ -157,7 +205,10 @@ class Individu_programme extends REST_Controller {
             'message' => 'No request found'
                 ], REST_Controller::HTTP_BAD_REQUEST);
             }
+       
+
             $delete = $this->EnqueteindividuManager->delete($id);          
+
             if (!is_null($delete)) {
                 $this->response([
                     'status' => TRUE,
