@@ -34,8 +34,10 @@ class Village_model extends CI_Model
     public function _set($village)
     {
         return array(
-            'code'       =>      $village['code'],
-            'libelle'    =>      $village['libelle']                       
+            'Code'          =>  $village['Code'],
+            'Village'       =>  $village['Village'],
+            'commune_id'    =>  $village['commune_id'],
+            'programme_id'  =>  $village['programme_id']                       
         );
     }
 

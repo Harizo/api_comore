@@ -10,10 +10,12 @@ class Village extends REST_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('village_model', 'villageManager');
-        $this->load->model('site_model', 'SiteManager');
+        $this->load->model('commune_model', 'CommuneManager');
+        $this->load->model('programme_model', 'ProgrammeManager');
     }
 
-    public function index_get() {
+    public function index_get()
+    {
         $id = $this->get('id');
         $cle_etrangere = $this->get('cle_etrangere');
 
@@ -24,18 +26,28 @@ class Village extends REST_Controller {
             if ($id) {
                 $data = array();
                 $village = $this->villageManager->findById($id);
+                $com = $this->CommuneManager->findById($value->commune_id);
+                $prog = $this->ProgrammeManager->findById($value->programme_id);
+
                 $data['id'] = $village->id;
-                $data['code'] = $village->code;
-                $data['nom'] = $village->nom;
+                $data['Code'] = $village->Code;
+                $data['Village'] = $village->Village;
+                $data['commune'] = $com[0];
+                $data['programme'] = $prog[0];
                 
             } else {
                 $village = $this->villageManager->findAll();
                 if ($village) {
                     foreach ($village as $key => $value) {
                         
+                        $prog = $this->ProgrammeManager->findById($value->programme_id);
+                        $com = $this->CommuneManager->findById($value->commune_id);
+
                         $data[$key]['id'] = $value->id;
-                        $data[$key]['code'] = $value->code;
-                        $data[$key]['nom'] = $value->nom;
+                        $data[$key]['Code'] = $value->Code;
+                        $data[$key]['Village'] = $value->Village;
+                        $data[$key]['commune'] = $com[0];
+                        $data[$key]['programme'] = $prog[0];
                         
                     };
                 } else
@@ -62,8 +74,10 @@ class Village extends REST_Controller {
         if ($supprimer == 0) {
             if ($id == 0) {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'nom' => $this->post('nom')
+                    'Code' => $this->post('Code'),
+                    'Village' => $this->post('Village'),
+                    'commune_id' => $this->post('commune_id'),
+                    'programme_id' => $this->post('programme_id')
                 );               
                 if (!$data) {
                     $this->response([
@@ -88,8 +102,10 @@ class Village extends REST_Controller {
                 }
             } else {
                 $data = array(
-                    'code' => $this->post('code'),
-                    'nom' => $this->post('nom')
+                    'Code' => $this->post('Code'),
+                    'Village' => $this->post('Village'),
+                    'commune_id' => $this->post('commune_id'),
+                    'programme_id' => $this->post('programme_id')
                 );              
                 if (!$data || !$id) {
                     $this->response([
