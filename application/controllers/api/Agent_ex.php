@@ -16,10 +16,12 @@ class Agent_ex extends REST_Controller {
     public function index_get() {
         $id = $this->get('id');
 		$data = array();
+        $taiza='';
 		if ($id) {
 			$tmp = $this->AgentexManager->findById($id);
 			if($tmp) {
 				$data=$tmp;
+                $taiza='taoid';
 			}
 		} else {			
 			$tmp = $this->AgentexManager->findAll();
@@ -37,6 +39,7 @@ class Agent_ex extends REST_Controller {
                     $data[$key]['Representant'] = $value->Representant;
                     $data[$key]['ile'] = $ile;
                     $data[$key]['programme'] = $prog[0];
+                     $taiza='findall';
                 }
                 
 			}
@@ -45,6 +48,7 @@ class Agent_ex extends REST_Controller {
             $this->response([
                 'status' => TRUE,
                 'response' => $data,
+                'taiz' => $taiza,
                 'message' => 'Get data success',
             ], REST_Controller::HTTP_OK);
         } else {

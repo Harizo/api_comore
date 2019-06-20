@@ -4,12 +4,13 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 require APPPATH . '/libraries/REST_Controller.php';
 
-class Agence_p extends REST_Controller {
+class Protection_sociale extends REST_Controller {
 
     public function __construct() {
         parent::__construct();
-        $this->load->model('agence_p_model', 'Agence_pManager');
+        $this->load->model('protection_sociale_model', 'Protection_socialeManager');
         $this->load->model('ile_model', 'ileManager');
+        $this->load->model('village_model', 'villageManager');
         $this->load->model('programme_model', 'ProgrammeManager');
     }
 
@@ -17,33 +18,37 @@ class Agence_p extends REST_Controller {
         $id = $this->get('id');
 		$data = array();
 		if ($id) {
-			$tmp = $this->Agence_pManager->findById($id);
+			$tmp = $this->Protection_socialeManager->findById($id);
 			if($tmp) {
 				    $ile = $this->ileManager->findById($value->ile_id);
                     $prog = $this->ProgrammeManager->findById($value->programme_id);
+                    $vil = $this->villageManager->findById($value->village_id);
                     $data['id'] = $value->id;
                     $data['Code'] = $value->Code;
                     $data['Nom'] = $value->Nom;
                     $data['Contact'] = $value->Contact;
-                    $data['Telephone'] = $value->Telephone;
+                    $data['NumeroTelephone'] = $value->NumeroTelephone;
                     $data['Representant'] = $value->Representant;
                     $data['ile'] = $ile;
+                    $data['vil'] = $vil;
                     $data['programme'] = $prog[0];
 			}
 		} else {			
-			$tmp = $this->Agence_pManager->findAll();
+			$tmp = $this->Protection_socialeManager->findAll();
 			if ($tmp) {
 				foreach ($tmp as $key => $value) {
 					
 					$ile = $this->ileManager->findById($value->ile_id);
                     $prog = $this->ProgrammeManager->findById($value->programme_id);
+                    $vil = $this->villageManager->findById($value->village_id);
                     $data[$key]['id'] = $value->id;
                     $data[$key]['Code'] = $value->Code;
                     $data[$key]['Nom'] = $value->Nom;
                     $data[$key]['Contact'] = $value->Contact;
-                    $data[$key]['Telephone'] = $value->Telephone;
+                    $data[$key]['NumeroTelephone'] = $value->NumeroTelephone;
                     $data[$key]['Representant'] = $value->Representant;
                     $data[$key]['ile'] = $ile;
+                    $data[$key]['vile'] = $vil;
                     $data[$key]['programme'] = $prog[0];
 				}	
 			}
@@ -70,9 +75,10 @@ class Agence_p extends REST_Controller {
 			'Code' => $this->post('Code'),
             'Nom' => $this->post('Nom'),
             'Contact' => $this->post('Contact'),
-            'Telephone' => $this->post('Telephone'),
+            'NumeroTelephone' => $this->post('NumeroTelephone'),
             'Representant' => $this->post('Representant'),
             'ile_id' => $this->post('ile_id'),
+            'village_id' => $this->post('village_id'),
             'programme_id' => $this->post('programme_id')
 		);               
         if ($supprimer == 0) {
@@ -84,7 +90,7 @@ class Agence_p extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-                $dataId = $this->Agence_pManager->add($data);              
+                $dataId = $this->Protection_socialeManager->add($data);              
                 if (!is_null($dataId)) {
                     $this->response([
                         'status' => TRUE,
@@ -106,7 +112,7 @@ class Agence_p extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-                $update = $this->Agence_pManager->update($id, $data);              
+                $update = $this->Protection_socialeManager->update($id, $data);              
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
@@ -128,7 +134,7 @@ class Agence_p extends REST_Controller {
             'message' => 'No request found'
                 ], REST_Controller::HTTP_BAD_REQUEST);
             }
-            $delete = $this->Agence_pManager->delete($id);          
+            $delete = $this->Protection_socialeManager->delete($id);          
             if (!is_null($delete)) {
                 $this->response([
                     'status' => TRUE,
