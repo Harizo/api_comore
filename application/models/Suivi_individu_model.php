@@ -33,7 +33,7 @@ class Suivi_individu_model extends CI_Model
 
     public function _set($suivi_individu)
     {
-        return array(
+       return array(
             'id_individu'       => $suivi_individu['id_individu'],
             'id_partenaire'     => $suivi_individu['id_partenaire'] ,                     
             'id_acteur'         => $suivi_individu['id_acteur'],                      
@@ -42,6 +42,12 @@ class Suivi_individu_model extends CI_Model
             'date_suivi'        => $suivi_individu['date_suivi'],                      
             'montant'           => $suivi_individu['montant'],                      
             'observation'       => $suivi_individu['observation'],                      
+            'poids'             => $suivi_individu['poids'],                      
+            'perimetre_bracial' => $suivi_individu['perimetre_bracial'],                      
+            'age_mois'          => $suivi_individu['age_mois'],                      
+            'taille'            => $suivi_individu['taille'],                      
+            'zscore'            => $suivi_individu['zscore'],                      
+            'mois_grossesse'    => $suivi_individu['mois_grossesse'],                      
         );
     }
 
@@ -119,7 +125,8 @@ class Suivi_individu_model extends CI_Model
     public function findAllByProgrammeAndIndividu($id_programmes,$id_individu)
     {
 		$requete="select sm.id,sm.id_individu,i.Nom,i.DateNaissance,"
-				."sm.id_programme,sm.id_acteur,sm.id_partenaire,sm.date_suivi,sm.montant,sm.id_type_transfert,sm.observation"
+				."sm.id_programme,sm.id_acteur,sm.id_partenaire,sm.date_suivi,sm.montant,sm.id_type_transfert,sm.observation,"
+				."sm.poids,sm.taille,sm.perimetre_bracial,sm.zscore,sm.age_mois,sm.mois_grossesse"
 				." from suivi_individu as sm"
 				." left outer join individu as i on i.id=sm.id_individu"
 				." left outer join menage as m on m.id=i.menage_id"

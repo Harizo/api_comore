@@ -45,9 +45,18 @@ class Suivi_individu extends REST_Controller {
                 {
                     foreach ($list_suivi_individu as $key => $value) 
                     {
-						$typetransfert = $this->TypetransfertManager->findById($value->id_type_transfert);
-						$partenaire = $this->SourcefinancementManager->findById($value->id_partenaire);
-						$acteur = $this->AgencepaiementManager->findById($value->id_acteur);
+						$typetransfert = array();
+						if($value->id_type_transfert && intval($value->id_type_transfert) >0) {
+							$typetransfert = $this->TypetransfertManager->findById($value->id_type_transfert);
+						}	
+						$partenaire = array();
+						if($value->id_partenaire && intval($value->id_partenaire) >0) {
+							$partenaire = $this->SourcefinancementManager->findById($value->id_partenaire);
+						}	
+						$acteur = array();
+						if($value->id_acteur && intval($value->id_acteur) >0) {
+							$acteur = $this->AgencepaiementManager->findById($value->id_acteur);
+						}	
                         $data[$key]['id'] = $value->id;
                         $data[$key]['id_individu'] = ($value->id_individu);
                         $data[$key]['Nom'] = ($value->Nom);
@@ -61,7 +70,13 @@ class Suivi_individu extends REST_Controller {
                         $data[$key]['observation'] = $value->observation;
                         $data[$key]['typetransfert'] = $typetransfert;
                         $data[$key]['partenaire'] = $partenaire;
-                         $data[$key]['acteur'] = $acteur;
+                        $data[$key]['acteur'] = $acteur;
+                        $data[$key]['poids'] = $value->poids;
+                        $data[$key]['perimetre_bracial'] = $value->perimetre_bracial;
+                        $data[$key]['age_mois'] = $value->age_mois;
+                        $data[$key]['taille'] = $value->taille;
+                        $data[$key]['zscore'] = $value->zscore;
+                        $data[$key]['mois_grossesse'] = $value->mois_grossesse;
                    }
                 }				
 			} 
@@ -118,6 +133,21 @@ class Suivi_individu extends REST_Controller {
     public function index_post() {
         $id = $this->post('id') ;
         $supprimer = $this->post('supprimer') ;
+		$id_partenaire=null;
+		$id_acteur=null;
+		$id_type_transfert=null;
+		$tmp=$this->post('id_partenaire') ;
+		if($tmp && intval($tmp) >0) {
+			$id_partenaire=$tmp;
+		}
+		$tmp=$this->post('id_acteur') ;
+		if($tmp && intval($tmp) >0) {
+			$id_acteur=$tmp;
+		}
+		$tmp=$this->post('id_type_transfert') ;
+		if($tmp && intval($tmp) >0) {
+			$id_type_transfert=$tmp;
+		}
         if ($supprimer == 0) {
 			$data = array(
 				'id_individu' => $this->post('id_individu'),
@@ -128,6 +158,12 @@ class Suivi_individu extends REST_Controller {
 				'date_suivi' => $this->post('date_suivi'),
 				'montant' => $this->post('montant'),
 				'observation' => $this->post('observation'),
+				'poids' => $this->post('poids'),
+				'perimetre_bracial' => $this->post('perimetre_bracial'),
+				'age_mois' => $this->post('age_mois'),
+				'taille' => $this->post('taille'),
+				'zscore' => $this->post('zscore'),
+				'mois_grossesse' => $this->post('mois_grossesse'),
 			);               
             if ($id == 0) {
                 if (!$data) 
