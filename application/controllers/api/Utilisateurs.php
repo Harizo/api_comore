@@ -93,7 +93,8 @@ class Utilisateurs extends REST_Controller {
 
         //authentification
         $email = $this->get('email');
-        $pwd = sha1($this->get('pwd'));
+        //$pwd = sha1($this->get('pwd'));
+        $pwd = ($this->get('pwd'));
         $site = $this->get('site');
 
         if ($email && $pwd) {
@@ -228,7 +229,8 @@ class Utilisateurs extends REST_Controller {
                     'prenom' => $this->post('prenom'),
                     // 'sigle' => $this->post('sigle'),
                     'email' => $this->post('email'),
-                    'password' => sha1($this->post('password')),
+                    'password' => ($this->post('password')),
+                    //'password' => sha1($this->post('password')),
                     'enabled' => 0,
                     'token' => bin2hex(openssl_random_pseudo_bytes(32)),
                     'roles' => serialize($getrole)

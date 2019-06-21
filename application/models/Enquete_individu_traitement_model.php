@@ -40,7 +40,9 @@ class Enquete_individu_traitement_model extends CI_Model
             'id_handicap_parole'    =>      $enquete_individu_traitement['id_handicap_parole'],                       
             'id_handicap_auditif'     =>      $enquete_individu_traitement['id_handicap_auditif'],                       
             'id_handicap_mental'    =>      $enquete_individu_traitement['id_handicap_mental'],                       
-            'id_handicap_moteur'     =>      $enquete_individu_traitement['id_handicap_moteur']           
+            'id_handicap_moteur'     =>      $enquete_individu_traitement['id_handicap_moteur'] ,
+
+            'vaccins'       =>      $enquete_individu_traitement['vaccins']           
         );
     }
 

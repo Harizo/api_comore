@@ -11,6 +11,7 @@ class Suivi_individu extends REST_Controller {
         $this->load->model('suivi_individu_model', 'SuiviindividuManager');
         $this->load->model('sourcefinancement_model', 'SourcefinancementManager');
         $this->load->model('type_transfert_model', 'TypetransfertManager');
+        $this->load->model('agence_p_model', 'AgencepaiementManager');
     }
 
     public function index_get() {
@@ -46,6 +47,7 @@ class Suivi_individu extends REST_Controller {
                     {
 						$typetransfert = $this->TypetransfertManager->findById($value->id_type_transfert);
 						$partenaire = $this->SourcefinancementManager->findById($value->id_partenaire);
+						$acteur = $this->AgencepaiementManager->findById($value->id_acteur);
                         $data[$key]['id'] = $value->id;
                         $data[$key]['id_individu'] = ($value->id_individu);
                         $data[$key]['Nom'] = ($value->Nom);
@@ -59,7 +61,8 @@ class Suivi_individu extends REST_Controller {
                         $data[$key]['observation'] = $value->observation;
                         $data[$key]['typetransfert'] = $typetransfert;
                         $data[$key]['partenaire'] = $partenaire;
-                    }
+                         $data[$key]['acteur'] = $acteur;
+                   }
                 }				
 			} 
 			else	
