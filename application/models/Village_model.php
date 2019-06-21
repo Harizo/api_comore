@@ -67,7 +67,7 @@ class Village_model extends CI_Model
             return null;
         }                 
     }
-
+//tsy niasa
     public function findAllByCommune($commune_id)
     {
         $result =  $this->db->select('*')
@@ -83,7 +83,25 @@ class Village_model extends CI_Model
             return null;
         }                 
     }
-
+//tsy niasa    
+public function findAllByIle($ile_id)
+    {
+        $result =  $this->db->select('see_village.id as id,see_village.Code as Code,see_village.Village as Village')
+                        ->from($this->table)
+                        ->join('see_commune', 'see_commune.id = see_village.commune_id')
+                        ->join('see_region', 'see_region.id = see_commune.region_id')
+                        ->join('see_ile', 'see_ile.id = see_region.ile_id')
+                        ->order_by('Village')
+                        ->where("see_ile.id", $ile_id)
+                        ->get()
+                        ->result();
+        if($result)
+        {
+            return $result;
+        }else{
+            return null;
+        }                 
+    }
     public function findById($id)
     {
         $this->db->where("id", $id);
