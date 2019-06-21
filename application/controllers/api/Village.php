@@ -20,7 +20,7 @@ class Village extends REST_Controller {
         $cle_etrangere = $this->get('cle_etrangere');
 
         if ($cle_etrangere) {
-            $tmp = $this->villageManager->findAllByIle($cle_etrangere);
+            $tmp = $this->villageManager->findAllByCommune($cle_etrangere);
             if($tmp){
                 foreach ($tmp as $key => $value) {
                 $data[$key]['id'] = $value->id;
