@@ -17,7 +17,9 @@ class Reporting extends REST_Controller
     	$type_etat = $this->get('type_etat');
     	if ($type_etat == 'transfert_monetaire_menage') 
     	{
-    		$data = $this->ReportingManager->find_sum();
+    		$date_deb = $this->get('date_deb');
+    		$date_fin = $this->get('date_fin');
+    		$data = $this->ReportingManager->find_sum($date_deb, $date_fin);
     	}
 
     	if (count($data)>0) {
