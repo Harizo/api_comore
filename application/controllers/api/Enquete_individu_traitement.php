@@ -32,6 +32,7 @@ class Enquete_individu_traitement extends REST_Controller {
                 $data['id_handicap_auditif'] = $enquete_individu_traitement->id_handicap_auditif;
                 $data['id_handicap_mental'] = $enquete_individu_traitement->id_handicap_mental;
                 $data['id_handicap_moteur'] = $enquete_individu_traitement->id_handicap_moteur;
+                $data['vaccins'] = unserialize($enquete_individu_traitement->vaccins);
               
             }
         }
@@ -88,7 +89,8 @@ class Enquete_individu_traitement extends REST_Controller {
                     'id_handicap_parole' 	=> $this->post('id_handicap_parole'),
                     'id_handicap_auditif' 	=> $this->post('id_handicap_auditif'),
                     'id_handicap_mental' 	=> $this->post('id_handicap_mental'),
-                    'id_handicap_moteur' 	=> $this->post('id_handicap_moteur')
+                    'id_handicap_moteur' 	=> $this->post('id_handicap_moteur'),
+                    'vaccins' => serialize($this->post('vaccins'))
                     
                 );               
                 if (!$data) 
@@ -126,7 +128,8 @@ class Enquete_individu_traitement extends REST_Controller {
                     'id_handicap_parole' 	=> $this->post('id_handicap_parole'),
                     'id_handicap_auditif' 	=> $this->post('id_handicap_auditif'),
                     'id_handicap_mental' 	=> $this->post('id_handicap_mental'),
-                    'id_handicap_moteur' 	=> $this->post('id_handicap_moteur')
+                    'id_handicap_moteur' 	=> $this->post('id_handicap_moteur'),
+                    'vaccins' => serialize($this->post('vaccins'))
                 );                 
                 if (!$data || !$id) {
                     $this->response([

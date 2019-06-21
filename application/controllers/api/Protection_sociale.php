@@ -48,7 +48,7 @@ class Protection_sociale extends REST_Controller {
                     $data[$key]['NumeroTelephone'] = $value->NumeroTelephone;
                     $data[$key]['Representant'] = $value->Representant;
                     $data[$key]['ile'] = $ile;
-                    $data[$key]['vile'] = $vil;
+                    $data[$key]['village'] = $vil;
                     $data[$key]['programme'] = $prog[0];
 				}	
 			}
