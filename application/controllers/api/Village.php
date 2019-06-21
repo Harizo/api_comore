@@ -18,8 +18,19 @@ class Village extends REST_Controller {
     {
         $id = $this->get('id');
         $cle_etrangere = $this->get('cle_etrangere');
-
-        if ($cle_etrangere) {
+        $ile_id = $this->get('ile_id');
+       if ($ile_id) {
+          $tmp = $this->villageManager->findAllByIle($ile_id);
+            if($tmp){
+                foreach ($tmp as $key => $value) {
+                $data[$key]['id'] = $value->id;
+                $data[$key]['Code'] = $value->Code;
+                $data[$key]['Village'] = $value->Village;
+                };
+            }else
+                    $data = array();
+       } else {
+           if ($cle_etrangere) {
             $tmp = $this->villageManager->findAllByCommune($cle_etrangere);
             if($tmp){
                 foreach ($tmp as $key => $value) {
@@ -62,6 +73,10 @@ class Village extends REST_Controller {
                     $data = array();
             }
         }
+       }
+       
+        
+        
         if (count($data)>0) {
             $this->response([
                 'status' => TRUE,
