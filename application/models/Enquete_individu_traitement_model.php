@@ -34,15 +34,20 @@ class Enquete_individu_traitement_model extends CI_Model
     public function _set($enquete_individu_traitement)
     {
         return array(
-            'id_individu'          =>      $enquete_individu_traitement['id_individu'],
-            'id_lien_parente'         =>      $enquete_individu_traitement['id_lien_parente'],                       
-            'id_handicap_visuel'           =>      $enquete_individu_traitement['id_handicap_visuel'],                       
-            'id_handicap_parole'    =>      $enquete_individu_traitement['id_handicap_parole'],                       
-            'id_handicap_auditif'     =>      $enquete_individu_traitement['id_handicap_auditif'],                       
-            'id_handicap_mental'    =>      $enquete_individu_traitement['id_handicap_mental'],                       
-            'id_handicap_moteur'     =>      $enquete_individu_traitement['id_handicap_moteur'] ,
-
-            'vaccins'       =>      $enquete_individu_traitement['vaccins']           
+            'id_individu'               =>      $enquete_individu_traitement['id_individu'],
+            'id_lien_parente'           =>      $enquete_individu_traitement['id_lien_parente'],                       
+            'id_handicap_visuel'        =>      $enquete_individu_traitement['id_handicap_visuel'],                       
+            'id_handicap_parole'        =>      $enquete_individu_traitement['id_handicap_parole'],                       
+            'id_handicap_auditif'       =>      $enquete_individu_traitement['id_handicap_auditif'],                       
+            'id_handicap_mental'        =>      $enquete_individu_traitement['id_handicap_mental'],                       
+            'id_handicap_moteur'        =>      $enquete_individu_traitement['id_handicap_moteur'] ,
+            'vaccins'                   =>      $enquete_individu_traitement['vaccins'],           
+            'poids'                     =>      $enquete_individu_traitement['poids'],           
+            'perimetre_bracial'         =>      $enquete_individu_traitement['perimetre_bracial'],           
+            'age_mois'                  =>      $enquete_individu_traitement['age_mois'],           
+            'taille'                    =>      $enquete_individu_traitement['taille'],           
+            'zscore'                    =>      $enquete_individu_traitement['zscore'] ,       
+            'mois_grossesse'                    =>      $enquete_individu_traitement['mois_grossesse']        
         );
     }
 

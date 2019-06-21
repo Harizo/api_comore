@@ -33,6 +33,11 @@ class Enquete_individu_traitement extends REST_Controller {
                 $data['id_handicap_mental'] = $enquete_individu_traitement->id_handicap_mental;
                 $data['id_handicap_moteur'] = $enquete_individu_traitement->id_handicap_moteur;
                 $data['vaccins'] = unserialize($enquete_individu_traitement->vaccins);
+                $data['poids'] = $enquete_individu_traitement->poids;
+                $data['perimetre_bracial'] = $enquete_individu_traitement->perimetre_bracial;
+                $data['age_mois'] = $enquete_individu_traitement->age_mois;
+                $data['taille'] = $enquete_individu_traitement->taille;
+                $data['zscore'] = $enquete_individu_traitement->zscore;
               
             }
         }
@@ -90,7 +95,13 @@ class Enquete_individu_traitement extends REST_Controller {
                     'id_handicap_auditif' 	=> $this->post('id_handicap_auditif'),
                     'id_handicap_mental' 	=> $this->post('id_handicap_mental'),
                     'id_handicap_moteur' 	=> $this->post('id_handicap_moteur'),
-                    'vaccins' => serialize($this->post('vaccins'))
+                    'vaccins'               => serialize($this->post('vaccins')),
+                    'poids'                 => $this->post('poids'),
+                    'perimetre_bracial'     => $this->post('perimetre_bracial'),
+                    'age_mois'              => $this->post('age_mois'),
+                    'taille'                => $this->post('taille'),
+                    'zscore'                => $this->post('zscore'),
+                    'mois_grossesse'        => $this->post('mois_grossesse')
                     
                 );               
                 if (!$data) 
@@ -122,14 +133,20 @@ class Enquete_individu_traitement extends REST_Controller {
             else 
             {
                 $data = array(
-                    'id_individu' 			=> $this->post('id_individu'),
-                    'id_lien_parente' 		=> $this->post('id_lien_parente'),
-                    'id_handicap_visuel' 	=> $this->post('id_handicap_visuel'),
-                    'id_handicap_parole' 	=> $this->post('id_handicap_parole'),
-                    'id_handicap_auditif' 	=> $this->post('id_handicap_auditif'),
-                    'id_handicap_mental' 	=> $this->post('id_handicap_mental'),
-                    'id_handicap_moteur' 	=> $this->post('id_handicap_moteur'),
-                    'vaccins' => serialize($this->post('vaccins'))
+                    'id_individu'           => $this->post('id_individu'),
+                    'id_lien_parente'       => $this->post('id_lien_parente'),
+                    'id_handicap_visuel'    => $this->post('id_handicap_visuel'),
+                    'id_handicap_parole'    => $this->post('id_handicap_parole'),
+                    'id_handicap_auditif'   => $this->post('id_handicap_auditif'),
+                    'id_handicap_mental'    => $this->post('id_handicap_mental'),
+                    'id_handicap_moteur'    => $this->post('id_handicap_moteur'),
+                    'vaccins'               => serialize($this->post('vaccins')),
+                    'poids'                 => $this->post('poids'),
+                    'perimetre_bracial'     => $this->post('perimetre_bracial'),
+                    'age_mois'              => $this->post('age_mois'),
+                    'taille'                => $this->post('taille'),
+                    'zscore'                => $this->post('zscore'),
+                    'mois_grossesse'                => $this->post('mois_grossesse')
                 );                 
                 if (!$data || !$id) {
                     $this->response([
