@@ -69,8 +69,8 @@ class Utilisateurs_model extends CI_Model
             'nom'                   =>      $utilisateurs['nom'],
             'prenom'                =>      $utilisateurs['prenom'],
             'email'                 =>      $utilisateurs['email'],
-            'password'              =>      $utilisateurs['password'],
-            'cin'                   =>      $utilisateurs['cin'],
+            'password'              =>      $utilisateurs['password']/*,
+            'cin'                   =>      $utilisateurs['cin'],*/
       
             
         );
