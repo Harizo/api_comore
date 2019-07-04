@@ -122,6 +122,21 @@ class Commune_model extends CI_Model {
         }else{
             return null;
         }                 
+    }
+
+
+    public function findCommuneByPrefecture($region_id) {
+        $result =  $this->db->select('*')
+                        ->from($this->table)
+                        ->where("region_id", $region_id)
+                        ->order_by('id', 'asc')
+                        ->get()
+                        ->result();
+        if($result) {
+            return $result;
+        }else{
+            return null;
+        }                 
     }	
     /*public function findById($id)  {
         $this->db->where("id", $id);

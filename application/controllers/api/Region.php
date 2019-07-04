@@ -18,37 +18,61 @@ class Region extends REST_Controller {
     public function index_get() {
         $id = $this->get('id');
         $cle_etrangere = $this->get('cle_etrangere');
-
-        if ($cle_etrangere) {
-            $data = $this->RegionManager->findAllByIle($cle_etrangere);
-            
-        } else {
-            if ($id) {
-                $data = array();
-                $region = $this->RegionManager->findById($id);
-                $data['id'] = $region->id;
-                $data['Code'] = $region->Code;
-                $data['Region'] = $region->Region;
-                
-            } else {
-                $region = $this->RegionManager->findAll();
-                if ($region)
+        $ile_id = $this->get('ile_id');
+        
+        if ($ile_id) {
+            $tmp = $this->RegionManager->findPrefectureByIle($ile_id);
+                if ($tmp)
                 {
-                    foreach ($region as $key => $value)
+                    foreach ($tmp as $key => $value)
                     {
-                        $ile = $this->ileManager->findById($value->ile_id);
-                        $prog = $this->ProgrammeManager->findById($value->programme_id);
-
                         $data[$key]['id'] = $value->id;
                         $data[$key]['Code'] = $value->Code;
                         $data[$key]['Region'] = $value->Region;
-                        $data[$key]['ile'] = $ile;
-                        $data[$key]['programme'] = $prog[0];
                     };
                 } else
                     $data = array();
+        } 
+        else
+        {
+
+            if ($cle_etrangere) 
+            {
+            $data = $this->RegionManager->findAllByIle($cle_etrangere);
+            
+            } else {
+                if ($id)
+                {
+                    $data = array();
+                    $region = $this->RegionManager->findById($id);
+                    $data['id'] = $region->id;
+                    $data['Code'] = $region->Code;
+                    $data['Region'] = $region->Region;
+                    
+                } 
+                else
+                {
+                    $region = $this->RegionManager->findAll();
+                    if ($region)
+                    {
+                        foreach ($region as $key => $value)
+                        {
+                            $ile = $this->ileManager->findById($value->ile_id);
+                            $prog = $this->ProgrammeManager->findById($value->programme_id);
+
+                            $data[$key]['id'] = $value->id;
+                            $data[$key]['Code'] = $value->Code;
+                            $data[$key]['Region'] = $value->Region;
+                            $data[$key]['ile'] = $ile;
+                            $data[$key]['programme'] = $prog[0];
+                        };
+                    } else
+                        $data = array();
+                }
             }
         }
+        
+        
         if (count($data)>0) {
             $this->response([
                 'status' => TRUE,

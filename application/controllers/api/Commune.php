@@ -19,58 +19,79 @@ class Commune extends REST_Controller {
         $id_commune = $this->get('id_commune');
        $id_district = $this->get('id_district');
         $id_region = $this->get('id_region');
+ //miasa       
+        $region_id = $this->get('region_id');
 		$taiza="";
-      
-        if ($cle_etrangere) {
-            $data = $this->CommuneManager->findAllByRegion($cle_etrangere);           
-        } else {
- //miasa           
-            if ($id)  {
+        
+        if ($region_id)
+        {
+         $tmp = $this->CommuneManager->findCommuneByPrefecture($region_id);
+            if ($tmp)
+            {
+                foreach ($tmp as $key => $value)
+                {       
+                    $data[$key]['id'] = $value->id;
+                    $data[$key]['Code'] = $value->Code;
+                    $data[$key]['Commune'] = $value->Commune;
+                }
+            } else
                 $data = array();
-                $commune = $this->CommuneManager->findById($id);
-                $pref = $this->RegionManager->findById($commune->region_id);
-                $prog = $this->ProgrammeManager->findById($value->programme_id);
-                $data['id'] = $commune->id;
-                $data['Code'] = $commune->Code;
-                $data['Commune'] = $commune->Commune;
-                $data['prefecture'] = $pref;
-                $data['programme'] = $prog[0];
-           
-          /*  } else if($id_commune) {    
-				$taiza="Ato ambony ary id_commune=".$id_commune."  ary id_region=".$id_region; 
-				$menu = $this->CommuneManager->find_Fokontany_avec_District_et_Region($id_commune);
-                if ($menu) {
-					$data=$menu;
-                } else
-                    $data = array();
-		
-            } else if($id_district) {	
-				$menu = $this->CommuneManager->find_Commune_avec_District_et_Region($id_district);
-                if ($menu) {
-					$data=$menu;
-                } else
-                    $data = array();*/
-//miasa 			
+        }
+        else
+        {
+            if ($cle_etrangere) {
+                $data = $this->CommuneManager->findAllByRegion($cle_etrangere);           
             } else {
-				$taiza="findAll no nataony";
-                $menu = $this->CommuneManager->findAll();
-                
-                if ($menu) {
-                    foreach ($menu as $key => $value) {
-                        
-                        $pref = $this->RegionManager->findById($value->region_id);
-                        $prog = $this->ProgrammeManager->findById($value->programme_id);
-                        
-                        $data[$key]['id'] = $value->id;
-                        $data[$key]['Code'] = $value->Code;
-                        $data[$key]['Commune'] = $value->Commune;
-                        $data[$key]['prefecture'] = $pref;
-                        $data[$key]['programme'] = $prog[0];
-                    }
-                } else
+     //miasa           
+                if ($id)  {
                     $data = array();
+                    $commune = $this->CommuneManager->findById($id);
+                    $pref = $this->RegionManager->findById($commune->region_id);
+                    $prog = $this->ProgrammeManager->findById($value->programme_id);
+                    $data['id'] = $commune->id;
+                    $data['Code'] = $commune->Code;
+                    $data['Commune'] = $commune->Commune;
+                    $data['prefecture'] = $pref;
+                    $data['programme'] = $prog[0];
+               
+              /*  } else if($id_commune) {    
+                    $taiza="Ato ambony ary id_commune=".$id_commune."  ary id_region=".$id_region; 
+                    $menu = $this->CommuneManager->find_Fokontany_avec_District_et_Region($id_commune);
+                    if ($menu) {
+                        $data=$menu;
+                    } else
+                        $data = array();
+            
+                } else if($id_district) {   
+                    $menu = $this->CommuneManager->find_Commune_avec_District_et_Region($id_district);
+                    if ($menu) {
+                        $data=$menu;
+                    } else
+                        $data = array();*/
+    //miasa             
+                } else {
+                    $taiza="findAll no nataony";
+                    $menu = $this->CommuneManager->findAll();
+                    
+                    if ($menu) {
+                        foreach ($menu as $key => $value) {
+                            
+                            $pref = $this->RegionManager->findById($value->region_id);
+                            $prog = $this->ProgrammeManager->findById($value->programme_id);
+                            
+                            $data[$key]['id'] = $value->id;
+                            $data[$key]['Code'] = $value->Code;
+                            $data[$key]['Commune'] = $value->Commune;
+                            $data[$key]['prefecture'] = $pref;
+                            $data[$key]['programme'] = $prog[0];
+                        }
+                    } else
+                        $data = array();
+                }
             }
         }
+        
+        
         if (count($data)>0) {
             $this->response([
                 'status' => TRUE,
