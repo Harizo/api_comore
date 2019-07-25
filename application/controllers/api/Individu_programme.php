@@ -60,6 +60,10 @@ class Individu_programme extends REST_Controller {
                         $data[$key]['id_programme'] = $id_programme;
                         $data[$key]['detail_charge'] = 0;
                         $data[$key]['detail_suivi_individu'] = array();
+                        $data[$key]['promotion_genre'] = array();
+                        $data[$key]['mariage_precoce'] = array();
+                        $data[$key]['nutrition'] = array();
+                        $data[$key]['transfert_argent'] = array();
                     }
                 }				
 			} 

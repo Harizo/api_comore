@@ -12,6 +12,7 @@ class Suivi_individu extends REST_Controller {
         $this->load->model('sourcefinancement_model', 'SourcefinancementManager');
         $this->load->model('type_transfert_model', 'TypetransfertManager');
         $this->load->model('agence_p_model', 'AgencepaiementManager');
+        $this->load->model('enquete_menage_model', 'EnquetemenageManager');
     }
 
     public function index_get() {
@@ -39,10 +40,16 @@ class Suivi_individu extends REST_Controller {
         {
             if ($id_programme && $id_individu) 
 			{ 
+				$data=array();
                 $id_prog = '"%'.$id_programme.'%"' ;
                 $list_suivi_individu = $this->SuiviindividuManager->findAllByProgrammeAndIndividu($id_programme,$id_individu);
                 if ($list_suivi_individu) 
                 {
+						$nutrition=array();
+						$transfert_argent=array();
+						$mariage_precoce=array();
+						$promotion_genre=array();
+					
                     foreach ($list_suivi_individu as $key => $value) 
                     {
 						$typetransfert = array();
@@ -57,27 +64,70 @@ class Suivi_individu extends REST_Controller {
 						if($value->id_acteur && intval($value->id_acteur) >0) {
 							$acteur = $this->AgencepaiementManager->findById($value->id_acteur);
 						}	
-                        $data[$key]['id'] = $value->id;
-                        $data[$key]['id_individu'] = ($value->id_individu);
-                        $data[$key]['Nom'] = ($value->Nom);
-                        $data[$key]['DateNaissance'] = ($value->DateNaissance);
-                        $data[$key]['date_suivi'] = $value->date_suivi;
-                        $data[$key]['id_partenaire'] = $value->id_partenaire;
-                        $data[$key]['id_acteur'] = $value->id_acteur;
-                        $data[$key]['id_type_transfert'] = $value->id_type_transfert;
-                        $data[$key]['id_programme'] = ($id_programme);
-                        $data[$key]['montant'] = $value->montant;
-                        $data[$key]['observation'] = $value->observation;
-                        $data[$key]['typetransfert'] = $typetransfert;
-                        $data[$key]['partenaire'] = $partenaire;
-                        $data[$key]['acteur'] = $acteur;
-                        $data[$key]['poids'] = $value->poids;
-                        $data[$key]['perimetre_bracial'] = $value->perimetre_bracial;
-                        $data[$key]['age_mois'] = $value->age_mois;
-                        $data[$key]['taille'] = $value->taille;
-                        $data[$key]['zscore'] = $value->zscore;
-                        $data[$key]['mois_grossesse'] = $value->mois_grossesse;
-                   }
+						$situation_matrimoniale = array();
+						if($value->id_situation_matrimoniale && intval($value->id_situation_matrimoniale) >0) {
+							$situation_matrimoniale = $this->EnquetemenageManager->findById($value->id_situation_matrimoniale,"situation_matrimoniale");
+						}	
+						$type_mariage = array();
+						if($value->id_type_mariage && intval($value->id_type_mariage) >0) {
+							$type_mariage = $this->EnquetemenageManager->findById($value->id_type_mariage,"type_mariage");
+						}	
+						$type_violence = array();
+						if($value->id_type_violence && intval($value->id_type_violence) >0) {
+							$type_violence = $this->EnquetemenageManager->findById($value->id_type_violence,"type_violence");
+						}	
+						$tmp=array();
+						$tmp['id'] = $value->id;
+						$tmp['id_individu'] = ($value->id_individu);
+						$tmp['Nom'] = ($value->Nom);
+						$tmp['DateNaissance'] = ($value->DateNaissance);
+						$tmp['date_suivi'] = $value->date_suivi;
+						$tmp['id_partenaire'] = $value->id_partenaire;
+						$tmp['id_acteur'] = $value->id_acteur;
+						$tmp['id_type_transfert'] = $value->id_type_transfert;
+						$tmp['id_programme'] = ($id_programme);
+						$tmp['montant'] = $value->montant;
+						$tmp['observation'] = $value->observation;
+						$tmp['typetransfert'] = $typetransfert;
+						$tmp['partenaire'] = $partenaire;
+						$tmp['acteur'] = $acteur;
+						$tmp['poids'] = $value->poids;
+						$tmp['perimetre_bracial'] = $value->perimetre_bracial;
+						$tmp['age_mois'] = $value->age_mois;
+						$tmp['taille'] = $value->taille;
+						$tmp['zscore'] = $value->zscore;
+						$tmp['mois_grossesse'] = $value->mois_grossesse;
+						$tmp['cause_mariage'] = $value->cause_mariage;
+						$tmp['age'] = $value->age;
+						$tmp['infraction'] = $value->infraction;
+						$tmp['lieu_infraction'] = $value->lieu_infraction;
+						$tmp['id_situation_matrimoniale'] = $value->id_situation_matrimoniale;
+						$tmp['situation_matrimoniale'] = $situation_matrimoniale;
+						$tmp['id_type_mariage'] = $value->id_type_mariage;
+						$tmp['type_mariage'] = $type_mariage;
+						$tmp['id_type_violence'] = $value->id_type_violence;
+						$tmp['type_violence'] = $type_violence;
+						$tmp['type_formation_recue'] = $value->type_formation_recue;
+						if(intval($id_programme)==5) {
+							// Promotion genre : séparer en 2 les enregistrements
+							if(intval($value->id_type_mariage) >0) {
+								$mariage_precoce[]=$tmp;
+							}	
+							if(intval($value->id_type_violence) >0) {
+								$promotion_genre[]=$tmp;
+							} 
+						} else if(intval($id_programme)==3) {
+							// Nutrition
+							$nutrition[] =$tmp;
+						} else if(intval($id_programme)==1) {
+							// Transfert monétaire
+							$transfert_argent[]=$tmp;
+						}				   
+					}
+					$data[0]['mariage_precoce']=$mariage_precoce;
+					$data[0]['promotion_genre']=$promotion_genre;
+					$data[0]['nutrition']=$nutrition;
+					$data[0]['transfert_argent']=$transfert_argent;					
                 }				
 			} 
 			else	
@@ -136,6 +186,17 @@ class Suivi_individu extends REST_Controller {
 		$id_partenaire=null;
 		$id_acteur=null;
 		$id_type_transfert=null;
+		$id_situation_matrimoniale=null;
+		$id_type_mariage=null;
+		$id_type_violence=null;
+		$age=null;
+		$montant=null;
+		$poids=null;
+		$perimetre_bracial=null;
+		$age_mois=null;
+		$taille=null;
+		$zscore=null;
+		$mois_grossesse=null;
 		$tmp=$this->post('id_partenaire') ;
 		if($tmp && intval($tmp) >0) {
 			$id_partenaire=$tmp;
@@ -148,22 +209,74 @@ class Suivi_individu extends REST_Controller {
 		if($tmp && intval($tmp) >0) {
 			$id_type_transfert=$tmp;
 		}
+		$tmp=$this->post('id_situation_matrimoniale') ;
+		if($tmp && intval($tmp) >0) {
+			$id_situation_matrimoniale=$tmp;
+		}
+		$tmp=$this->post('id_type_mariage') ;
+		if($tmp && intval($tmp) >0) {
+			$id_type_mariage=$tmp;
+		}
+		$tmp=$this->post('id_type_violence') ;
+		if($tmp && intval($tmp) >0) {
+			$id_type_violence=$tmp;
+		}
+		$tmp=$this->post('age') ;
+		if($tmp && intval($tmp) >0) {
+			$age=$tmp;
+		}
+		$tmp=$this->post('montant') ;
+		if($tmp && intval($tmp) >0) {
+			$montant=$tmp;
+		}
+		$tmp=$this->post('poids') ;
+		if($tmp && intval($tmp) >0) {
+			$poids=$tmp;
+		}
+		$tmp=$this->post('perimetre_bracial') ;
+		if($tmp && intval($tmp) >0) {
+			$perimetre_bracial=$tmp;
+		}
+		$tmp=$this->post('age_mois') ;
+		if($tmp && intval($tmp) >0) {
+			$age_mois=$tmp;
+		}
+		$tmp=$this->post('taille') ;
+		if($tmp && intval($tmp) >0) {
+			$taille=$tmp;
+		}
+		$tmp=$this->post('zscore') ;
+		if($tmp) {
+			$zscore=$tmp;
+		}
+		$tmp=$this->post('mois_grossesse') ;
+		if($tmp && intval($tmp) >0) {
+			$mois_grossesse=$tmp;
+		}
         if ($supprimer == 0) {
 			$data = array(
 				'id_individu' => $this->post('id_individu'),
 				'id_programme' => $this->post('id_programme'),
-				'id_partenaire' => $this->post('id_partenaire'),
-				'id_acteur' => $this->post('id_acteur'),
-				'id_type_transfert' => $this->post('id_type_transfert'),
+				'id_partenaire' => $id_partenaire,
+				'id_acteur' => $id_acteur,
+				'id_type_transfert' => $id_type_transfert,
 				'date_suivi' => $this->post('date_suivi'),
-				'montant' => $this->post('montant'),
+				'montant' => $montant,
 				'observation' => $this->post('observation'),
-				'poids' => $this->post('poids'),
-				'perimetre_bracial' => $this->post('perimetre_bracial'),
-				'age_mois' => $this->post('age_mois'),
-				'taille' => $this->post('taille'),
-				'zscore' => $this->post('zscore'),
-				'mois_grossesse' => $this->post('mois_grossesse'),
+				'poids' => $poids,
+				'perimetre_bracial' => $perimetre_bracial,
+				'age_mois' => $age_mois,
+				'taille' => $taille,
+				'zscore' => $zscore,
+				'mois_grossesse' => $mois_grossesse,
+				'cause_mariage' => $this->post('cause_mariage'),
+				'age' => $age,
+				'lieu_infraction' => $this->post('lieu_infraction'),
+				'infraction'      => $this->post('infraction'),
+				'id_situation_matrimoniale' => $id_situation_matrimoniale,
+				'id_type_mariage' => $id_type_mariage,
+				'id_type_violence' => $id_type_violence,
+				'type_formation_recue' => $this->post('type_formation_recue'),
 			);               
             if ($id == 0) {
                 if (!$data) 

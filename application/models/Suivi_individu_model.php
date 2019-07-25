@@ -49,6 +49,14 @@ class Suivi_individu_model extends CI_Model
             'taille'            => $suivi_individu['taille'],                      
             'zscore'            => $suivi_individu['zscore'],                      
             'mois_grossesse'    => $suivi_individu['mois_grossesse'],                      
+            'cause_mariage'     => $suivi_individu['cause_mariage'],                      
+            'age'               => $suivi_individu['age'],                      
+            'infraction'        => $suivi_individu['infraction'],                      
+            'lieu_infraction'   => $suivi_individu['lieu_infraction'],                      
+            'id_situation_matrimoniale' => $suivi_individu['id_situation_matrimoniale'],                      
+            'id_type_mariage'   => $suivi_individu['id_type_mariage'],                      
+            'id_type_violence'  => $suivi_individu['id_type_violence'],                      
+            'type_formation_recue' => $suivi_individu['type_formation_recue'],                      
         );
     }
 
@@ -125,9 +133,10 @@ class Suivi_individu_model extends CI_Model
     }
     public function findAllByProgrammeAndIndividu($id_programmes,$id_individu)
     {
-		$requete="select sm.id,sm.id_individu,i.Nom,i.DateNaissance,"
+		$requete="select sm.id,sm.id_individu,i.Nom,i.DateNaissance,i.sexe,"
 				."sm.id_programme,sm.id_acteur,sm.id_partenaire,sm.date_suivi,sm.montant,sm.id_type_transfert,sm.observation,"
-				."sm.poids,sm.taille,sm.perimetre_bracial,sm.zscore,sm.age_mois,sm.mois_grossesse"
+				."sm.poids,sm.taille,sm.perimetre_bracial,sm.zscore,sm.age_mois,sm.mois_grossesse,sm.age,sm.infraction,"
+				."sm.cause_mariage,sm.lieu_infraction,sm.id_situation_matrimoniale,sm.id_type_mariage,sm.id_type_violence,sm.type_formation_recue"
 				." from suivi_individu as sm"
 				." left outer join individu as i on i.id=sm.id_individu"
 				." left outer join menage as m on m.id=i.menage_id"
