@@ -28,6 +28,7 @@ class Utilisateurs extends REST_Controller {
             if ($user) 
             {
                 $data['id'] = $user->id;
+                $data['id_ile'] = $user->id_ile;
                 $data['nom'] = $user->nom;
                 $data['prenom'] = $user->prenom;
                // $data['sigle'] = $user->sigle;
@@ -68,6 +69,7 @@ class Utilisateurs extends REST_Controller {
                     foreach ($usr as $key => $value) 
                     {
                         $data[$key]['id'] = $value->id;
+                        $data[$key]['id_ile'] = $value->id_ile;
                         $data[$key]['nom'] = $value->nom;
                         $data[$key]['prenom'] = $value->prenom;
                      //   $data[$key]['sigle'] = $value->sigle;
@@ -103,6 +105,7 @@ class Utilisateurs extends REST_Controller {
             {
                 $data = array();
                 $data['id'] = $value[0]->id;
+                $data['id_ile'] = $value[0]->id_ile;
                 $data['nom'] = $value[0]->nom;
                 $data['prenom'] = $value[0]->prenom;
            //     $data['sigle'] = $value[0]->sigle;
@@ -147,7 +150,7 @@ class Utilisateurs extends REST_Controller {
         }
 
         //status success + data
-        if (count($data)>0) {
+        if ($data) {
             $this->response([
                 'status' => TRUE,
                 'response' => $data,
@@ -218,9 +221,9 @@ class Utilisateurs extends REST_Controller {
                 {
                     $getrole = $this->post('roles');
                     $data = array(
+                        'id_ile' => $this->post('id_ile'),
                         'nom' => $this->post('nom'),
                         'prenom' => $this->post('prenom'),         
-                     //   'sigle' => $this->post('sigle'),
                         'email' => $this->post('email'),                 
                         'enabled' => $this->post('enabled'),
                         'roles' => serialize($getrole)
@@ -266,6 +269,7 @@ class Utilisateurs extends REST_Controller {
            
                 $getrole = array("USER");
                 $data = array(
+                    'id_ile' => $this->post('id_ile'),
                     'nom' => $this->post('nom'),
                     'prenom' => $this->post('prenom'),
                     // 'sigle' => $this->post('sigle'),

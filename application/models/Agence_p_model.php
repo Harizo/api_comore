@@ -12,6 +12,16 @@ class Agence_p_model extends CI_Model {
             return null;
         }                    
     }
+
+    public function add_down($agence_p, $id)  {
+        $this->db->set($this->_set_down($agence_p, $id))
+                            ->insert($this->table);
+        if($this->db->affected_rows() === 1)  {
+            return $this->db->insert_id();
+        }else{
+            return null;
+        }                    
+    }
     public function update($id, $agence_p)  {
         $this->db->set($this->_set($agence_p))
                             ->where('id', (int) $id)
@@ -24,6 +34,19 @@ class Agence_p_model extends CI_Model {
     }
     public function _set($agence_p) {
         return array(
+            'Code' => $agence_p['Code'],
+            'Nom' => $agence_p['Nom'],
+            'Contact' => $agence_p['Contact'],
+            'Representant' => $agence_p['Representant'],
+            'Telephone' => $agence_p['Telephone'],
+            'programme_id' => $agence_p['programme_id'],
+            'ile_id' => $agence_p['ile_id']
+        );
+    }
+
+    public function _set_down($agence_p, $id) {
+        return array(
+            'id' => $id,
             'Code' => $agence_p['Code'],
             'Nom' => $agence_p['Nom'],
             'Contact' => $agence_p['Contact'],

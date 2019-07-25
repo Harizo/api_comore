@@ -35,6 +35,7 @@ class Suivi_individu_model extends CI_Model
     {
        return array(
             'id_individu'       => $suivi_individu['id_individu'],
+            'id_individu'       => $suivi_individu['id_individu'],
             'id_partenaire'     => $suivi_individu['id_partenaire'] ,                     
             'id_acteur'         => $suivi_individu['id_acteur'],                      
             'id_programme'      => $suivi_individu['id_programme'],                      

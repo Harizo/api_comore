@@ -94,6 +94,7 @@ class Utilisateurs_model extends CI_Model
     {
 
         return array(
+            'id_ile'                   =>      $utilisateurs['id_ile'],
             'nom'                   =>      $utilisateurs['nom'],
             'prenom'                =>      $utilisateurs['prenom'],
             'email'                 =>      $utilisateurs['email'],

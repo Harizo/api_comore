@@ -55,11 +55,13 @@ class Individu extends REST_Controller {
         if ($supprimer == 0) {
             if ($id == 0) {
                 $data = array(
+                    'id_serveur_centrale' => null,
                     'menage_id' => $this->post('menage_id'),
                     'Nom' => $this->post('Nom'),
                     'DateNaissance' => $this->post('DateNaissance'),
                     'Activite' => $this->post('Activite'),
-                    'travailleur' => $this->post('travailleur')
+                    'travailleur' => $this->post('travailleur'),
+                    'sexe' => $this->post('sexe')
                 );               
                 if (!$data) {
                     $this->response([
@@ -84,12 +86,13 @@ class Individu extends REST_Controller {
                 }
             } else {
                 $data = array(
+                    'id_serveur_centrale' => $this->post('id_serveur_centrale'),
                     'menage_id' => $this->post('menage_id'),
                     'Nom' => $this->post('Nom'),
                     'DateNaissance' => $this->post('DateNaissance'),
                     'Activite' => $this->post('Activite'),
-              
-                    'travailleur' => $this->post('travailleur')
+                    'travailleur' => $this->post('travailleur'),
+                    'sexe' => $this->post('sexe')
                 );              
                 if (!$data || !$id) {
                     $this->response([
@@ -102,7 +105,7 @@ class Individu extends REST_Controller {
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
-                        'response' => 1,
+                        'response' => $id,
                         'message' => 'Update data success'
                             ], REST_Controller::HTTP_OK);
                 } else {

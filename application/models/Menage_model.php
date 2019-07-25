@@ -34,6 +34,7 @@ class Menage_model extends CI_Model
     public function _set($menage)
     {
         return array(
+            'id_serveur_centrale'       =>      $menage['id_serveur_centrale'],
             'DateInscription'       =>      $menage['DateInscription'],
             'village_id'            =>      $menage['village_id'],                       
             'NumeroEnregistrement'  =>      $menage['NumeroEnregistrement'],                       

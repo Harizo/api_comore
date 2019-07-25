@@ -34,6 +34,7 @@ class Individu_programme_model extends CI_Model
     public function _set($individu_programme)
     {
         return array(
+            'id_serveur_centrale'          =>      $individu_programme['id_serveur_centrale'],
             'id_individu'          =>      $individu_programme['id_individu'],
             'id_programme'         =>      $individu_programme['id_programme']                      
         );

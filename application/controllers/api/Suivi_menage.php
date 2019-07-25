@@ -170,7 +170,7 @@ class Suivi_menage extends REST_Controller {
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
-                        'response' => 1,
+                        'response' => $id,
                         'message' => 'Update data success'
                             ], REST_Controller::HTTP_OK);
                 } else {

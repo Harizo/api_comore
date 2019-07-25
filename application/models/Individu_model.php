@@ -34,11 +34,13 @@ class Individu_model extends CI_Model
     public function _set($individu)
     {
         return array(
+            'id_serveur_centrale'         =>      $individu['id_serveur_centrale'],
             'menage_id'         =>      $individu['menage_id'],
             'Nom'               =>      $individu['Nom'],                      
             'DateNaissance'     =>      $individu['DateNaissance'],                      
             'Activite'          =>      $individu['Activite'],                      
-            'travailleur'       =>      $individu['travailleur']                      
+            'travailleur'       =>      $individu['travailleur'],                      
+            'sexe'              =>      $individu['sexe']                      
         );
     }
 

@@ -25,6 +25,7 @@ class Enquete_menage_traitement extends REST_Controller {
             if ($enquete_menage_traitement) 
             {
                 $data['id'] = ($enquete_menage_traitement->id);
+                $data['id_serveur_centrale'] = ($enquete_menage_traitement->id_serveur_centrale);
                 $data['id_menage'] = ($enquete_menage_traitement->id_menage);
                 $data['bien_equipement'] = unserialize($enquete_menage_traitement->bien_equipement);
                 $data['revetement_mur'] = unserialize($enquete_menage_traitement->revetement_mur);
@@ -83,6 +84,7 @@ class Enquete_menage_traitement extends REST_Controller {
             if ($id == 0) 
             {
                 $data = array(
+                    'id_serveur_centrale' => null,
                     'id_menage' => $this->post('id_menage'),
                     'source_eau' => serialize($this->post('source_eau')),
                     'toilette' => $this->post('toilette'),
@@ -122,6 +124,7 @@ class Enquete_menage_traitement extends REST_Controller {
             else 
             {
                 $data = array(
+                    'id_serveur_centrale' => $this->post('id_serveur_centrale'),
                     'id_menage' => $this->post('id_menage'),
                     'source_eau' => serialize($this->post('source_eau')),
                     'toilette' => $this->post('toilette'),
@@ -143,7 +146,7 @@ class Enquete_menage_traitement extends REST_Controller {
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
-                        'response' => $update,
+                        'response' => $id,
                         'message' => 'Update data success'
                             ], REST_Controller::HTTP_OK);
                 } else {

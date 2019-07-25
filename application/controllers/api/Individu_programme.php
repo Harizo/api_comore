@@ -33,6 +33,7 @@ class Individu_programme extends REST_Controller {
             if ($individu_programme) 
             {
                 $data['id'] = ($individu_programme->id);
+                $data['id_serveur_centrale'] = ($individu_programme->id_serveur_centrale);
                 $data['id_individu'] = ($individu_programme->id_individu);
                 $data['id_programme'] = unserialize($individu_programme->id_programme);
                 
@@ -133,6 +134,7 @@ class Individu_programme extends REST_Controller {
             if ($id == 0) 
             {
                 $data = array(
+                    'id_serveur_centrale' => null,
                     'id_individu' => $this->post('id_individu'),
                     'id_programme' => serialize($this->post('id_programme'))
                 );               
@@ -168,6 +170,7 @@ class Individu_programme extends REST_Controller {
             else 
             {
                 $data = array(
+                    'id_serveur_centrale' => $this->post('id_serveur_centrale'),
                     'id_individu' => $this->post('id_individu'),
                     'id_programme' => serialize($this->post('id_programme'))
                 );                 
@@ -183,7 +186,7 @@ class Individu_programme extends REST_Controller {
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
-                        'response' => $update,
+                        'response' => $id,
 
                         'message' => 'Update data success'
                             ], REST_Controller::HTTP_OK);
