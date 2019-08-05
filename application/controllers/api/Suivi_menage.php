@@ -40,32 +40,59 @@ class Suivi_menage extends REST_Controller {
             if ($id_programme && $id_menage) 
 			{ 
                 $id_prog = '"%'.$id_programme.'%"' ;
-                $list_suivi_menage = $this->SuivimenageManager->findAllByProgrammeAndMenage($id_prog,$id_menage);
+                $list_suivi_menage = $this->SuivimenageManager->findAllByProgrammeAndMenage($id_programme,$id_menage);
                 if ($list_suivi_menage) 
                 {
+						$nutrition=array();
+						$transfert_argent=array();
                     foreach ($list_suivi_menage as $key => $value) 
                     {
-						$typetransfert = $this->TypetransfertManager->findById($value->id_type_transfert);
-						$partenaire = $this->SourcefinancementManager->findById($value->id_partenaire);
-						$acteur = $this->AgencepaiementManager->findById($value->id_acteur);
-                        $data[$key]['id'] = $value->id;
-                        $data[$key]['id_menage'] = ($value->id_menage);
-                        $data[$key]['nomchefmenage'] = ($value->nomchefmenage);
-                        $data[$key]['PersonneInscription'] = ($value->PersonneInscription);
-                        $data[$key]['AgeInscrire'] = ($value->AgeInscrire);
-                        $data[$key]['Addresse'] = ($value->Addresse);
-                        $data[$key]['NumeroEnregistrement'] = ($value->NumeroEnregistrement);
-                        $data[$key]['date_suivi'] = $value->date_suivi;
-                        $data[$key]['id_partenaire'] = $value->id_partenaire;
-                        $data[$key]['id_acteur'] = $value->id_acteur;
-                        $data[$key]['id_type_transfert'] = $value->id_type_transfert;
-                        $data[$key]['id_programme'] = ($id_programme);
-                        $data[$key]['montant'] = $value->montant;
-                        $data[$key]['observation'] = $value->observation;
-                        $data[$key]['typetransfert'] = $typetransfert;
-                        $data[$key]['partenaire'] = $partenaire;
-                        $data[$key]['acteur'] = $acteur;
+						$typetransfert = array();
+						if($value->id_type_transfert && intval($value->id_type_transfert) >0) {
+							$typetransfert = $this->TypetransfertManager->findById($value->id_type_transfert);
+						}	
+						$partenaire = array();
+						if($value->id_partenaire && intval($value->id_partenaire) >0) {
+							$partenaire = $this->SourcefinancementManager->findById($value->id_partenaire);
+						}	
+						$acteur = array();
+						if($value->id_acteur && intval($value->id_acteur) >0) {
+							$acteur = $this->AgencepaiementManager->findById($value->id_acteur);
+						}	
+ 						$tmp=array();
+						$tmp['id'] = $value->id;
+                        $tmp['id_menage'] = ($value->id_menage);
+                        $tmp['nomchefmenage'] = ($value->nomchefmenage);
+                        $tmp['PersonneInscription'] = ($value->PersonneInscription);
+                        $tmp['AgeInscrire'] = ($value->AgeInscrire);
+                        $tmp['Addresse'] = ($value->Addresse);
+                        $tmp['NumeroEnregistrement'] = ($value->NumeroEnregistrement);
+                        $tmp['date_suivi'] = $value->date_suivi;
+                        $tmp['id_partenaire'] = $value->id_partenaire;
+                        $tmp['id_acteur'] = $value->id_acteur;
+                        $tmp['id_type_transfert'] = $value->id_type_transfert;
+                        $tmp['id_programme'] = ($id_programme);
+                        $tmp['montant'] = $value->montant;
+                        $tmp['observation'] = $value->observation;
+                        $tmp['typetransfert'] = $typetransfert;
+                        $tmp['partenaire'] = $partenaire;
+                        $tmp['acteur'] = $acteur;
+						$tmp['poids'] = $value->poids;
+						$tmp['perimetre_bracial'] = $value->perimetre_bracial;
+						$tmp['age_mois'] = $value->age_mois;
+						$tmp['taille'] = $value->taille;
+						$tmp['zscore'] = $value->zscore;
+						$tmp['mois_grossesse'] = $value->mois_grossesse;
+						if(intval($id_programme)==3) {
+							// Nutrition
+							$nutrition[] =$tmp;
+						} else if(intval($id_programme)==1) {
+							// Transfert monétaire
+							$transfert_argent[]=$tmp;
+						}				   
                     }
+					$data[0]['nutrition']=$nutrition;
+					$data[0]['transfert_argent']=$transfert_argent;					
                 }				
 			} 
 			else	
@@ -121,15 +148,71 @@ class Suivi_menage extends REST_Controller {
     public function index_post() {
         $id = $this->post('id') ;
         $supprimer = $this->post('supprimer') ;
+		$id_partenaire=null;
+		$id_acteur=null;
+		$id_type_transfert=null;
+		$montant=null;
+		$poids=null;
+		$perimetre_bracial=null;
+		$age_mois=null;
+		$taille=null;
+		$zscore=null;
+		$mois_grossesse=null;
+		$tmp=$this->post('id_partenaire') ;
+		if($tmp && intval($tmp) >0) {
+			$id_partenaire=$tmp;
+		}
+		$tmp=$this->post('id_acteur') ;
+		if($tmp && intval($tmp) >0) {
+			$id_acteur=$tmp;
+		}
+		$tmp=$this->post('id_type_transfert') ;
+		if($tmp && intval($tmp) >0) {
+			$id_type_transfert=$tmp;
+		}
+		$tmp=$this->post('montant') ;
+		if($tmp && intval($tmp) >0) {
+			$montant=$tmp;
+		}
+		$tmp=$this->post('poids') ;
+		if($tmp && intval($tmp) >0) {
+			$poids=$tmp;
+		}
+		$tmp=$this->post('perimetre_bracial') ;
+		if($tmp && intval($tmp) >0) {
+			$perimetre_bracial=$tmp;
+		}
+		$tmp=$this->post('age_mois') ;
+		if($tmp && intval($tmp) >0) {
+			$age_mois=$tmp;
+		}
+		$tmp=$this->post('taille') ;
+		if($tmp && intval($tmp) >0) {
+			$taille=$tmp;
+		}
+		$tmp=$this->post('zscore') ;
+		if($tmp) {
+			$zscore=$tmp;
+		}
+		$tmp=$this->post('mois_grossesse') ;
+		if($tmp && intval($tmp) >0) {
+			$mois_grossesse=$tmp;
+		}
         if ($supprimer == 0) {
 			$data = array(
 				'id_menage' => $this->post('id_menage'),
 				'id_programme' => $this->post('id_programme'),
-				'id_partenaire' => $this->post('id_partenaire'),
-				'id_acteur' => $this->post('id_acteur'),
-				'id_type_transfert' => $this->post('id_type_transfert'),
+				'id_partenaire' => $id_partenaire,
+				'id_acteur' => $id_acteur,
+				'id_type_transfert' => $id_type_transfert,
 				'date_suivi' => $this->post('date_suivi'),
-				'montant' => $this->post('montant'),
+				'montant' => $montant,
+				'poids' => $poids,
+				'perimetre_bracial' => $perimetre_bracial,
+				'age_mois' => $age_mois,
+				'taille' => $taille,
+				'zscore' => $zscore,
+				'mois_grossesse' => $mois_grossesse,
 				'observation' => $this->post('observation'),
 			);               
             if ($id == 0) {

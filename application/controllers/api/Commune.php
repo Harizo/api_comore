@@ -46,11 +46,11 @@ class Commune extends REST_Controller {
                 if ($id)  {
                     $data = array();
                     $commune = $this->CommuneManager->findById($id);
-                    $pref = $this->RegionManager->findById($commune->region_id);
-                    $prog = $this->ProgrammeManager->findById($value->programme_id);
-                    $data['id'] = $commune->id;
-                    $data['Code'] = $commune->Code;
-                    $data['Commune'] = $commune->Commune;
+                    $pref = $this->RegionManager->findById($commune[0]->region_id);
+                    $prog = $this->ProgrammeManager->findById($commune[0]->programme_id);
+                    $data['id'] = $commune[0]->id;
+                    $data['Code'] = $commune[0]->Code;
+                    $data['Commune'] = $commune[0]->Commune;
                     $data['prefecture'] = $pref;
                     $data['programme'] = $prog[0];
                

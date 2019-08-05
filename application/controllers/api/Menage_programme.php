@@ -37,8 +37,8 @@ class Menage_programme extends REST_Controller {
         else
         {
             if ($id_programme && $id_village) 
-			{ 
-                $id_prog = '"%'.$id_programme.'%"' ;
+			{  
+                $id_prog = "'%".'"'.$id_programme.'"'."%'" ;
                 $list_menage_programme = $this->EnquetemenageManager->findAllByProgrammeAndVillage($id_prog,$id_village);
                 if ($list_menage_programme) 
                 {
@@ -53,6 +53,8 @@ class Menage_programme extends REST_Controller {
                         $data[$key]['NumeroEnregistrement'] = ($value->NumeroEnregistrement);
                         $data[$key]['id_programme'] = ($id_programme);
                         $data[$key]['detail_suivi_menage'] = array();
+                        $data[$key]['nutrition'] = array();
+                        $data[$key]['transfert_argent'] = array();
                         $data[$key]['detail_charge'] = 0;
                     }
                 }				
