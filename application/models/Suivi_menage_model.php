@@ -42,6 +42,12 @@ class Suivi_menage_model extends CI_Model
             'date_suivi'        => $suivi_menage['date_suivi'],                      
             'montant'           => $suivi_menage['montant'],                      
             'observation'       => $suivi_menage['observation'],                      
+            'poids'             => $suivi_menage['poids'],                      
+            'perimetre_bracial' => $suivi_menage['perimetre_bracial'],                      
+            'age_mois'          => $suivi_menage['age_mois'],                      
+            'taille'            => $suivi_menage['taille'],                      
+            'zscore'            => $suivi_menage['zscore'],                      
+            'mois_grossesse'    => $suivi_menage['mois_grossesse'],                      
         );
     }
 
@@ -119,11 +125,12 @@ class Suivi_menage_model extends CI_Model
     public function findAllByProgrammeAndMenage($id_programmes,$id_menage)
     {
 		$requete="select sm.id,sm.id_menage,m.nomchefmenage,m.PersonneInscription,m.AgeInscrire,m.Addresse,m.NumeroEnregistrement,"
-				."sm.id_programme,sm.id_acteur,sm.id_partenaire,sm.date_suivi,sm.montant,sm.id_type_transfert,sm.observation"
+				."sm.id_programme,sm.id_acteur,sm.id_partenaire,sm.date_suivi,sm.montant,sm.id_type_transfert,sm.observation,"
+				."sm.poids,sm.taille,sm.perimetre_bracial,sm.zscore,sm.age_mois,sm.mois_grossesse"
 				." from suivi_menage as sm"
 				." left outer join menage as m on m.id=sm.id_menage"
 				." left outer join see_village as v on v.id=m.village_id"
-                ." where sm.id_programme like ".$id_programmes
+                ." where sm.id_programme=".$id_programmes
 				." and sm.id_menage=".$id_menage;	
 				$result = $this->db->query($requete)->result();
         if($result)

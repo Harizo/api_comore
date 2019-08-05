@@ -44,7 +44,7 @@ class Individu_programme extends REST_Controller {
 
             if ($id_programme && $id_village) 
 			{ 
-                $id_prog = '"%'.$id_programme.'%"' ;
+                $id_prog = "'%".'"'.$id_programme.'"'."%'" ;
                 $list_individu_programme = $this->IndividuprogrammeManager->findAllByProgrammeAndVillage($id_prog,$id_village);
                 if ($list_individu_programme) 
                 {
