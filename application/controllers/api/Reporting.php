@@ -161,6 +161,16 @@ class Reporting extends REST_Controller
             $data[0]['poids_median'] = $poids_median->nbr_enfant;
         }
 
+        if ($type_etat == "nbr_mariage_precoce") 
+        {
+            $data = $this->ReportingManager->nbr_mariage_precoce($this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+        }
+
+        if ($type_etat == "nbr_violence") 
+        {
+            $data = $this->ReportingManager->nbr_violence($this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+        }
+
     	if (count($data)>0) {
             $this->response([
                 'status' => TRUE,

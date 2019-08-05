@@ -277,6 +277,91 @@ class Reporting_model extends CI_Model
         }
         return null;
     }
+
+    public function nbr_mariage_precoce($condition)
+    {
+        //$array = array('date_suivi >=' => $date_debut, 'date_suivi <=' => $date_fin);
+        $this->db->select(" count(*) as nbr,
+                            type_mariage.description as type_mariage",FALSE);
+                           //DATE_FORMAT(suivi_individu.date_suivi,'%Y') as annee",FALSE);
+
+        $this->db->select("(select count(*) from suivi_individu,menage,individu,see_village,see_commune,see_region,see_ile 
+                            where menage.village_id = see_village.id
+                            and see_commune.id = see_village.commune_id
+                            and individu.id = suivi_individu.id_individu
+                            and suivi_individu.id_type_mariage > 0 
+                            and menage.id = individu.menage_id
+                            and see_commune.region_id = see_region.id
+                            and see_ile.id = see_region.ile_id and ".$condition." ) as nbr_total_mariage_precoce",FALSE);
+
+        $q =  $this->db->from('suivi_individu')
+
+                    ->join('individu', 'individu.id = suivi_individu.id_individu')
+                    ->join('menage', 'menage.id = individu.menage_id')
+                    ->join('see_village', 'menage.village_id = see_village.id')
+                    ->join('see_commune', 'see_commune.id = see_village.commune_id')
+                    ->join('see_region', 'see_commune.region_id = see_region.id')
+                    ->join('see_ile', 'see_ile.id = see_region.ile_id')
+                    ->join('type_mariage', 'type_mariage.id = suivi_individu.id_type_mariage')
+        
+                    ->where("suivi_individu.id_type_mariage > 0 ")
+                    ->group_by("type_mariage.id")
+                    
+                    
+                    ->where($condition)
+                   
+                    ->get()
+                    ->result();
+
+
+
+            if($q)
+            {
+                return $q;
+            }
+            else
+            {
+                return null;
+            }  
+    }
+
+    public function nbr_violence($condition)
+    {
+        //$array = array('date_suivi >=' => $date_debut, 'date_suivi <=' => $date_fin);
+        $this->db->select(" count(*) as nbr,
+                            type_violence.description as type_violence",FALSE);
+                           //DATE_FORMAT(suivi_individu.date_suivi,'%Y') as annee",FALSE);
+
+        $q =  $this->db->from('suivi_individu')
+
+                    ->join('individu', 'individu.id = suivi_individu.id_individu')
+                    ->join('menage', 'menage.id = individu.menage_id')
+                    ->join('see_village', 'menage.village_id = see_village.id')
+                    ->join('see_commune', 'see_commune.id = see_village.commune_id')
+                    ->join('see_region', 'see_commune.region_id = see_region.id')
+                    ->join('see_ile', 'see_ile.id = see_region.ile_id')
+                    ->join('type_violence', 'type_violence.id = suivi_individu.id_type_violence')
+        
+                    ->where("suivi_individu.id_type_violence > 0 ")
+                    ->group_by("type_violence.id")
+                    
+                    
+                    ->where($condition)
+                   
+                    ->get()
+                    ->result();
+
+
+
+            if($q)
+            {
+                return $q;
+            }
+            else
+            {
+                return null;
+            }  
+    }
     
 }
 ?>
