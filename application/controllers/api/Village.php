@@ -37,6 +37,7 @@ class Village extends REST_Controller {
                 $data[$key]['id'] = $value->id;
                 $data[$key]['Code'] = $value->Code;
                 $data[$key]['Village'] = $value->Village;
+                $data[$key]['commune_id'] = $value->commune_id;
                 };
             }else
                     $data = array();
@@ -45,14 +46,14 @@ class Village extends REST_Controller {
             if ($id) {
                 $data = array();
                 $village = $this->villageManager->findById($id);
-                $com = $this->CommuneManager->findById($value->commune_id);
-                $prog = $this->ProgrammeManager->findById($value->programme_id);
+                $com = $this->CommuneManager->findById($village->commune_id);
+                $prog = $this->ProgrammeManager->findById($village->programme_id);
 
-                $data['id'] = $village->id;
-                $data['Code'] = $village->Code;
-                $data['Village'] = $village->Village;
-                $data['commune'] = $com[0];
-                $data['programme'] = $prog[0];
+                $data[0]['id'] = $village->id;
+                $data[0]['Code'] = $village->Code;
+                $data[0]['Village'] = $village->Village;
+                $data[0]['commune'] = $com[0];
+                $data[0]['programme'] = $prog[0];
                 
             } else {
                 $village = $this->villageManager->findAll();
