@@ -65,6 +65,7 @@ class Menage extends REST_Controller {
             if ($id == 0) {
                
                 $data = array(
+                    'id_serveur_centrale' => null,
                     'DateInscription' => $this->post('DateInscription'),
                     'village_id' => $this->post('village_id'),
                     'NumeroEnregistrement' => $this->post('NumeroEnregistrement'),
@@ -97,6 +98,7 @@ class Menage extends REST_Controller {
                 }
             } else {
                 $data = array(
+                    'id_serveur_centrale' => $this->post('id_serveur_centrale'),
                     'DateInscription' => $this->post('DateInscription'),
                     'village_id' => $this->post('village_id'),
                     'NumeroEnregistrement' => $this->post('NumeroEnregistrement'),
@@ -117,7 +119,7 @@ class Menage extends REST_Controller {
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
-                        'response' => 1,
+                        'response' => $id,
                         'message' => 'Update data success'
                             ], REST_Controller::HTTP_OK);
                 } else {

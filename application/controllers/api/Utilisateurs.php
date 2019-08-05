@@ -27,7 +27,8 @@ class Utilisateurs extends REST_Controller {
             $user = $this->UserManager->findById($id);
             if ($user) 
             {
-                #$data['id'] = $user->id;
+                $data['id'] = $user->id;
+                $data['id_ile'] = $user->id_ile;
                 $data['nom'] = $user->nom;
                 $data['prenom'] = $user->prenom;
                // $data['sigle'] = $user->sigle;
@@ -68,6 +69,7 @@ class Utilisateurs extends REST_Controller {
                     foreach ($usr as $key => $value) 
                     {
                         $data[$key]['id'] = $value->id;
+                        $data[$key]['id_ile'] = $value->id_ile;
                         $data[$key]['nom'] = $value->nom;
                         $data[$key]['prenom'] = $value->prenom;
                      //   $data[$key]['sigle'] = $value->sigle;
@@ -103,6 +105,7 @@ class Utilisateurs extends REST_Controller {
             {
                 $data = array();
                 $data['id'] = $value[0]->id;
+                $data['id_ile'] = $value[0]->id_ile;
                 $data['nom'] = $value[0]->nom;
                 $data['prenom'] = $value[0]->prenom;
            //     $data['sigle'] = $value[0]->sigle;
@@ -147,7 +150,7 @@ class Utilisateurs extends REST_Controller {
         }
 
         //status success + data
-        if (count($data)>0) {
+        if ($data) {
             $this->response([
                 'status' => TRUE,
                 'response' => $data,
@@ -170,20 +173,19 @@ class Utilisateurs extends REST_Controller {
         $id = $this->post('id') ;
         $gestion_utilisateur = $this->post('gestion_utilisateur') ;
         $supprimer = $this->post('supprimer') ;
+        $profil = $this->post('profil') ;
 
         if ($gestion_utilisateur == 1) 
         {
 
-            if ($supprimer == 0) 
+            if ($profil == 1) 
             {
-                $getrole = $this->post('roles');
+                
                 $data = array(
                     'nom' => $this->post('nom'),
                     'prenom' => $this->post('prenom'),         
-                 //   'sigle' => $this->post('sigle'),
-                    'email' => $this->post('email'),                 
-                    'enabled' => $this->post('enabled'),
-                    'roles' => serialize($getrole)
+                    'password' => sha1($this->post('password')),
+                    'email' => $this->post('email')
                   
                 );
 
@@ -195,7 +197,7 @@ class Utilisateurs extends REST_Controller {
                             ], REST_Controller::HTTP_OK);
                 }
 
-                $update = $this->UserManager->update($id, $data);
+                $update = $this->UserManager->update_profil($id, $data);
                 
                 if(!is_null($update))
                 {
@@ -215,7 +217,49 @@ class Utilisateurs extends REST_Controller {
             }
             else
             {
-                    //si suppression
+                if ($supprimer == 0) 
+                {
+                    $getrole = $this->post('roles');
+                    $data = array(
+                        'id_ile' => $this->post('id_ile'),
+                        'nom' => $this->post('nom'),
+                        'prenom' => $this->post('prenom'),         
+                        'email' => $this->post('email'),                 
+                        'enabled' => $this->post('enabled'),
+                        'roles' => serialize($getrole)
+                      
+                    );
+
+                    if (!$data || !$id) {
+                        $this->response([
+                            'status' => FALSE,
+                            'response' => 0,
+                            'message' => 'No request found'
+                                ], REST_Controller::HTTP_OK);
+                    }
+
+                    $update = $this->UserManager->update($id, $data);
+                    
+                    if(!is_null($update))
+                    {
+                        $this->response([
+                            'status' => TRUE,
+                            'response' => $update,
+                            'message' => 'Update data success'
+                                ], REST_Controller::HTTP_OK);
+                    }
+                    else
+                    {
+                        $this->response([
+                            'status' => FALSE,
+                            'message' => 'No request found'
+                                ], REST_Controller::HTTP_OK);
+                    }
+                }
+                else
+                {
+                        //si suppression
+                }
             }
             
         }
@@ -225,6 +269,7 @@ class Utilisateurs extends REST_Controller {
            
                 $getrole = array("USER");
                 $data = array(
+                    'id_ile' => $this->post('id_ile'),
                     'nom' => $this->post('nom'),
                     'prenom' => $this->post('prenom'),
                     // 'sigle' => $this->post('sigle'),

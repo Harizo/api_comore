@@ -62,6 +62,7 @@ class Agent_ex extends REST_Controller {
     public function index_post() {
         $id = $this->post('id') ;
         $supprimer = $this->post('supprimer') ;
+        $etat_download = $this->post('etat_download') ; 
 		$data = array(
 			'Code' => $this->post('Code'),
             'Nom' => $this->post('Nom'),
@@ -93,26 +94,55 @@ class Agent_ex extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-            } else {
-                if (!$data || !$id) {
-                    $this->response([
-                        'status' => FALSE,
-                        'response' => 0,
-                        'message' => 'No request found'
-                            ], REST_Controller::HTTP_BAD_REQUEST);
+            } 
+            else 
+            {
+                if ($etat_download) 
+                {
+                    if (!$data) {
+                        $this->response([
+                            'status' => FALSE,
+                            'response' => 0,
+                            'message' => 'No request found'
+                                ], REST_Controller::HTTP_BAD_REQUEST);
+                    }
+                    $dataId = $this->AgentexManager->add_down($data, $id);              
+                    if (!is_null($dataId)) {
+                        $this->response([
+                            'status' => TRUE,
+                            'response' => $dataId,
+                            'message' => 'Data insert success'
+                                ], REST_Controller::HTTP_OK);
+                    } else {
+                        $this->response([
+                            'status' => FALSE,
+                            'response' => 0,
+                            'message' => 'No request found'
+                                ], REST_Controller::HTTP_BAD_REQUEST);
+                    }
                 }
-                $update = $this->AgentexManager->update($id, $data);              
-                if(!is_null($update)){
-                    $this->response([
-                        'status' => TRUE, 
-                        'response' => 1,
-                        'message' => 'Update data success'
-                            ], REST_Controller::HTTP_OK);
-                } else {
-                    $this->response([
-                        'status' => FALSE,
-                        'message' => 'No request found'
-                            ], REST_Controller::HTTP_OK);
+                else
+                {
+                    if (!$data || !$id) {
+                        $this->response([
+                            'status' => FALSE,
+                            'response' => 0,
+                            'message' => 'No request found'
+                                ], REST_Controller::HTTP_BAD_REQUEST);
+                    }
+                    $update = $this->AgentexManager->update($id, $data);              
+                    if(!is_null($update)){
+                        $this->response([
+                            'status' => TRUE, 
+                            'response' => 1,
+                            'message' => 'Update data success'
+                                ], REST_Controller::HTTP_OK);
+                    } else {
+                        $this->response([
+                            'status' => FALSE,
+                            'message' => 'No request found'
+                                ], REST_Controller::HTTP_OK);
+                    }
                 }
             }
         } else {

@@ -34,6 +34,7 @@ class Menage_programme_model extends CI_Model
     public function _set($menage_programme)
     {
         return array(
+            'id_serveur_centrale'          =>      $menage_programme['id_serveur_centrale'],
             'id_menage'          =>      $menage_programme['id_menage'],
             'id_programme'         =>      $menage_programme['id_programme']                      
         );

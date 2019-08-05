@@ -58,7 +58,17 @@ class Programme_model extends CI_Model {
             return $result;
         }else{
             return null;
-        }                 
+        }                  
+    }
+
+    public function findById_obj($id)
+    {
+        $this->db->where("id", $id);
+        $q = $this->db->get($this->table);
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return null;
     }
 }
 ?>

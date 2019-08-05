@@ -34,6 +34,7 @@ class Enquete_menage_traitement_model extends CI_Model
     public function _set($enquete_menage_traitement)
     {
         return array(
+            'id_serveur_centrale'          =>      $enquete_menage_traitement['id_serveur_centrale'],
             'id_menage'          =>      $enquete_menage_traitement['id_menage'],
             'source_eau'         =>      $enquete_menage_traitement['source_eau'],                       
             'toilette'           =>      $enquete_menage_traitement['toilette'],                       

@@ -27,6 +27,7 @@ class Enquete_individu_traitement extends REST_Controller {
                 $data['id'] = ($enquete_individu_traitement->id);
                 $data['id_individu'] = $enquete_individu_traitement->id_individu;
                 $data['id_lien_parente'] = $enquete_individu_traitement->id_lien_parente;
+                $data['situation_matrimoniale'] = $enquete_individu_traitement->situation_matrimoniale;
                 $data['id_handicap_visuel'] = $enquete_individu_traitement->id_handicap_visuel;
                 $data['id_handicap_parole'] = $enquete_individu_traitement->id_handicap_parole;
                 $data['id_handicap_auditif'] = $enquete_individu_traitement->id_handicap_auditif;
@@ -88,8 +89,10 @@ class Enquete_individu_traitement extends REST_Controller {
             if ($id == 0) 
             {
                 $data = array(
+                    'id_serveur_centrale' => null,
                     'id_individu' 			=> $this->post('id_individu'),
-                    'id_lien_parente' 		=> $this->post('id_lien_parente'),
+                    'id_lien_parente'       => $this->post('id_lien_parente'),
+                    'situation_matrimoniale' 		=> $this->post('situation_matrimoniale'),
                     'id_handicap_visuel' 	=> $this->post('id_handicap_visuel'),
                     'id_handicap_parole' 	=> $this->post('id_handicap_parole'),
                     'id_handicap_auditif' 	=> $this->post('id_handicap_auditif'),
@@ -133,8 +136,10 @@ class Enquete_individu_traitement extends REST_Controller {
             else 
             {
                 $data = array(
+                    'id_serveur_centrale' => $this->post('id_serveur_centrale'),
                     'id_individu'           => $this->post('id_individu'),
                     'id_lien_parente'       => $this->post('id_lien_parente'),
+                    'situation_matrimoniale'       => $this->post('situation_matrimoniale'),
                     'id_handicap_visuel'    => $this->post('id_handicap_visuel'),
                     'id_handicap_parole'    => $this->post('id_handicap_parole'),
                     'id_handicap_auditif'   => $this->post('id_handicap_auditif'),
@@ -159,7 +164,7 @@ class Enquete_individu_traitement extends REST_Controller {
                 if(!is_null($update)){
                     $this->response([
                         'status' => TRUE, 
-                        'response' => $update,
+                        'response' => $id,
                         'message' => 'Update data success'
                             ], REST_Controller::HTTP_OK);
                 } else {

@@ -34,8 +34,10 @@ class Enquete_individu_traitement_model extends CI_Model
     public function _set($enquete_individu_traitement)
     {
         return array(
+            'id_serveur_centrale'       =>      $enquete_individu_traitement['id_serveur_centrale'],
             'id_individu'               =>      $enquete_individu_traitement['id_individu'],
             'id_lien_parente'           =>      $enquete_individu_traitement['id_lien_parente'],                       
+            'situation_matrimoniale'    =>      $enquete_individu_traitement['situation_matrimoniale'],                       
             'id_handicap_visuel'        =>      $enquete_individu_traitement['id_handicap_visuel'],                       
             'id_handicap_parole'        =>      $enquete_individu_traitement['id_handicap_parole'],                       
             'id_handicap_auditif'       =>      $enquete_individu_traitement['id_handicap_auditif'],                       

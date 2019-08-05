@@ -78,6 +78,7 @@ $db['default'] = array(
 	'hostname' => 'localhost',
 	'username' => 'root',
 	'password' => '',
+	//'password' => 'Anacep@2018',
 	'database' => 'ogadc',
 	'dbdriver' => 'mysqli',
 	'dbprefix' => '',
