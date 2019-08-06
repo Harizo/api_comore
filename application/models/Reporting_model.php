@@ -362,6 +362,29 @@ class Reporting_model extends CI_Model
                 return null;
             }  
     }
+
+    public function nbr_individu_par_formation($id_formation_recue, $condition)
+    {
+        $this->db->select(" count(*) as nbr",FALSE);
+
+        $q =  $this->db->from('enquete_individu')
+
+                    ->join('individu', 'individu.id = enquete_individu.id_individu')
+                    ->join('menage', 'menage.id = individu.menage_id')
+                    ->join('see_village', 'menage.village_id = see_village.id')
+                    ->join('see_commune', 'see_commune.id = see_village.commune_id')
+                    ->join('see_region', 'see_commune.region_id = see_region.id')
+                    ->join('see_ile', 'see_ile.id = see_region.ile_id')
+                    ->like('formation_recue', $id_formation_recue)
+                    ->where($condition)
+                   
+                    ->get();
+
+        if ($q->num_rows() > 0) {
+            return $q->row();
+        }
+        return null;
+    }
     
 }
 ?>

@@ -34,6 +34,7 @@ class Enquete_individu_traitement extends REST_Controller {
                 $data['id_handicap_mental'] = $enquete_individu_traitement->id_handicap_mental;
                 $data['id_handicap_moteur'] = $enquete_individu_traitement->id_handicap_moteur;
                 $data['vaccins'] = unserialize($enquete_individu_traitement->vaccins);
+                $data['formation_recue'] = unserialize($enquete_individu_traitement->formation_recue);
                 $data['poids'] = $enquete_individu_traitement->poids;
                 $data['perimetre_bracial'] = $enquete_individu_traitement->perimetre_bracial;
                 $data['age_mois'] = $enquete_individu_traitement->age_mois;
@@ -99,6 +100,7 @@ class Enquete_individu_traitement extends REST_Controller {
                     'id_handicap_mental' 	=> $this->post('id_handicap_mental'),
                     'id_handicap_moteur' 	=> $this->post('id_handicap_moteur'),
                     'vaccins'               => serialize($this->post('vaccins')),
+                    'formation_recue'               => serialize($this->post('formation_recue')),
                     'poids'                 => $this->post('poids'),
                     'perimetre_bracial'     => $this->post('perimetre_bracial'),
                     'age_mois'              => $this->post('age_mois'),
@@ -146,6 +148,7 @@ class Enquete_individu_traitement extends REST_Controller {
                     'id_handicap_mental'    => $this->post('id_handicap_mental'),
                     'id_handicap_moteur'    => $this->post('id_handicap_moteur'),
                     'vaccins'               => serialize($this->post('vaccins')),
+                    'formation_recue'               => serialize($this->post('formation_recue')),
                     'poids'                 => $this->post('poids'),
                     'perimetre_bracial'     => $this->post('perimetre_bracial'),
                     'age_mois'              => $this->post('age_mois'),

@@ -11,6 +11,7 @@ class Reporting extends REST_Controller
         parent::__construct();
         $this->load->model('reporting_model', 'ReportingManager');
         $this->load->model('programme_model', 'ProgrammeManager');
+        $this->load->model('enquete_menage_model', 'EnquetemenageManager');
     }
 
     public function index_get() 
@@ -169,6 +170,28 @@ class Reporting extends REST_Controller
         if ($type_etat == "nbr_violence") 
         {
             $data = $this->ReportingManager->nbr_violence($this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+        }
+
+        if ($type_etat == "nbr_individu_par_formation") 
+        {
+            $type_formation_recues = $this->EnquetemenageManager->findAll("type_formation_recue");
+
+            if ($type_formation_recues) 
+            {
+                $total = 0 ;
+                foreach ($type_formation_recues as $key => $value) 
+                {
+                    $id_formation = '"'.$value->id.'"' ;
+                    $data[$key]['id'] = $value->id ;
+                    $data[$key]['description'] = $value->description ;
+                    $nbr = $this->ReportingManager->nbr_individu_par_formation($id_formation,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+
+                    $data[$key]['nbr'] = $nbr->nbr;
+                    $total = $total + $nbr->nbr;
+                }
+
+                $data['total'] = $total ;
+            }
         }
 
     	if (count($data)>0) {
