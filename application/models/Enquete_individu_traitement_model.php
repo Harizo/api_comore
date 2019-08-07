@@ -44,6 +44,7 @@ class Enquete_individu_traitement_model extends CI_Model
             'id_handicap_mental'        =>      $enquete_individu_traitement['id_handicap_mental'],                       
             'id_handicap_moteur'        =>      $enquete_individu_traitement['id_handicap_moteur'] ,
             'vaccins'                   =>      $enquete_individu_traitement['vaccins'],           
+            'formation_recue'                   =>      $enquete_individu_traitement['formation_recue'],           
             'poids'                     =>      $enquete_individu_traitement['poids'],           
             'perimetre_bracial'         =>      $enquete_individu_traitement['perimetre_bracial'],           
             'age_mois'                  =>      $enquete_individu_traitement['age_mois'],           
