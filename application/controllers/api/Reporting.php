@@ -187,10 +187,12 @@ class Reporting extends REST_Controller
                     $nbr = $this->ReportingManager->nbr_individu_par_formation($id_formation,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
 
                     $data[$key]['nbr'] = $nbr->nbr;
+                    $data[$key]['nbr_femme'] = $nbr->nbr_femme;
+                    $data[$key]['nbr_homme'] = $nbr->nbr_homme;
                     $total = $total + $nbr->nbr;
                 }
 
-                $data['total'] = $total ;
+               
             }
         }
 

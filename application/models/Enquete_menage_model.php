@@ -39,7 +39,7 @@ class Enquete_menage_model extends CI_Model {
     public function findAll($nom_table) {
         $result =  $this->db->select('*')
                         ->from($nom_table)
-                        ->order_by('id')
+                        ->order_by('description')
                         ->get()
                         ->result();
         if($result) {

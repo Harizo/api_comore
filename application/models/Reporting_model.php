@@ -367,6 +367,25 @@ class Reporting_model extends CI_Model
     {
         $this->db->select(" count(*) as nbr",FALSE);
 
+        $this->db->select('(select count(*) from enquete_individu,menage,individu,see_village,see_commune,see_region,see_ile 
+                            where menage.village_id = see_village.id
+                            and see_commune.id = see_village.commune_id
+                            and individu.id = enquete_individu.id_individu
+                            and menage.id = individu.menage_id
+                            and see_commune.region_id = see_region.id
+                            and enquete_individu.formation_recue like "%"'.($id_formation_recue).'"%"
+                            and individu.sexe = 0
+                            and see_ile.id = see_region.ile_id and '.$condition.' ) as nbr_femme',FALSE);
+        $this->db->select('(select count(*) from enquete_individu,menage,individu,see_village,see_commune,see_region,see_ile 
+                            where menage.village_id = see_village.id
+                            and see_commune.id = see_village.commune_id
+                            and individu.id = enquete_individu.id_individu
+                            and menage.id = individu.menage_id
+                            and see_commune.region_id = see_region.id
+                            and enquete_individu.formation_recue like "%"'.($id_formation_recue).'"%"
+                            and individu.sexe = 1
+                            and see_ile.id = see_region.ile_id and '.$condition.' ) as nbr_homme',FALSE);
+
         $q =  $this->db->from('enquete_individu')
 
                     ->join('individu', 'individu.id = enquete_individu.id_individu')
