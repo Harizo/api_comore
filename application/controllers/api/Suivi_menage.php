@@ -86,8 +86,8 @@ class Suivi_menage extends REST_Controller {
 						if(intval($id_programme)==3) {
 							// Nutrition
 							$nutrition[] =$tmp;
-						} else if(intval($id_programme)==1) {
-							// Transfert monétaire
+						} else  {
+							// Transfert monétaire par défaut
 							$transfert_argent[]=$tmp;
 						}				   
                     }

@@ -119,8 +119,8 @@ class Suivi_individu extends REST_Controller {
 						} else if(intval($id_programme)==3) {
 							// Nutrition
 							$nutrition[] =$tmp;
-						} else if(intval($id_programme)==1) {
-							// Transfert monétaire
+						} else  {
+							// Transfert monétaire par défaut
 							$transfert_argent[]=$tmp;
 						}				   
 					}
