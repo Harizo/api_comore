@@ -60,7 +60,8 @@ class Suivi_menage extends REST_Controller {
 							$acteur = $this->AgencepaiementManager->findById($value->id_acteur);
 						}	
  						$tmp=array();
-						$tmp['id'] = $value->id;
+                        $tmp['id'] = $value->id;
+						$tmp['id_serveur_centrale'] = $value->id_serveur_centrale;
                         $tmp['id_menage'] = ($value->id_menage);
                         $tmp['nomchefmenage'] = ($value->nomchefmenage);
                         $tmp['PersonneInscription'] = ($value->PersonneInscription);
@@ -105,6 +106,7 @@ class Suivi_menage extends REST_Controller {
                     foreach ($list_suivi_menage as $key => $value) 
                     {
                         $data[$key]['id'] = $value->id;
+                        //$data[$key]['id_serveur_centrale'] = $value->id_serveur_centrale;
                         $data[$key]['NomInscrire'] = ($value->NomInscrire);
                         $data[$key]['PersonneInscription'] = ($value->PersonneInscription);
                         $data[$key]['AgeInscrire'] = ($value->AgeInscrire);
@@ -200,6 +202,7 @@ class Suivi_menage extends REST_Controller {
 		}
         if ($supprimer == 0) {
 			$data = array(
+                'id_serveur_centrale' => null,
 				'id_menage' => $this->post('id_menage'),
 				'id_programme' => $this->post('id_programme'),
 				'id_partenaire' => $id_partenaire,
@@ -249,6 +252,24 @@ class Suivi_menage extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
+
+                $data = array(
+                    'id_serveur_centrale' => $this->post('id_serveur_centrale'),
+                    'id_menage' => $this->post('id_menage'),
+                    'id_programme' => $this->post('id_programme'),
+                    'id_partenaire' => $id_partenaire,
+                    'id_acteur' => $id_acteur,
+                    'id_type_transfert' => $id_type_transfert,
+                    'date_suivi' => $this->post('date_suivi'),
+                    'montant' => $montant,
+                    'poids' => $poids,
+                    'perimetre_bracial' => $perimetre_bracial,
+                    'age_mois' => $age_mois,
+                    'taille' => $taille,
+                    'zscore' => $zscore,
+                    'mois_grossesse' => $mois_grossesse,
+                    'observation' => $this->post('observation'),
+                ); 
                 $update = $this->SuivimenageManager->update($id, $data);              
                 if(!is_null($update)){
                     $this->response([
