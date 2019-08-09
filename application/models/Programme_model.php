@@ -12,6 +12,15 @@ class Programme_model extends CI_Model {
             return null;
         }                    
     }
+    public function add_down($programme)  {
+        $this->db->set($this->_set_down($programme))
+                            ->insert($this->table);
+        if($this->db->affected_rows() === 1)  {
+            return $this->db->insert_id();
+        }else{
+            return null;
+        }                    
+    }
     public function update($id, $programme)  {
         $this->db->set($this->_set($programme))
                             ->where('id', (int) $id)
@@ -25,6 +34,12 @@ class Programme_model extends CI_Model {
     public function _set($programme) {
         return array(
             'libelle' => $programme['libelle'],
+        );
+    }
+    public function _set_down($programme) {
+        return array(
+            'id' => $programme['id'],
+            'libelle' => $programme['libelle']
         );
     }
     public function delete($id) {

@@ -164,12 +164,12 @@ class Reporting extends REST_Controller
 
         if ($type_etat == "nbr_mariage_precoce") 
         {
-            $data = $this->ReportingManager->nbr_mariage_precoce($this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+            $data = $this->ReportingManager->nbr_mariage_precoce($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
         }
 
         if ($type_etat == "nbr_violence") 
         {
-            $data = $this->ReportingManager->nbr_violence($this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+            $data = $this->ReportingManager->nbr_violence($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
         }
 
         if ($type_etat == "nbr_individu_par_formation") 
@@ -194,6 +194,12 @@ class Reporting extends REST_Controller
 
                
             }
+        }
+
+        if ($type_etat == 'transfert_monetaire_individu') 
+        {
+            
+            $data = $this->ReportingManager->find_sum_individu($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
         }
 
     	if (count($data)>0) {

@@ -37,7 +37,61 @@ class Reporting_model extends CI_Model
                     ->where($array)
                     ->where($condition)
                     
-                    ->group_by('id_menage,id_partenaire,id_acteur,date_suivi,id_programme')  
+                    ->group_by('menage.id,id_partenaire,id_acteur,date_suivi,id_programme')  
+                    ->get()
+                    ->result();
+
+
+
+            if($result)
+            {
+                return $result;
+            }
+            else
+            {
+                return null;
+            }       
+   
+    }
+
+    public function find_sum_individu($date_debut, $date_fin, $condition) //historique transfert monetaire individu
+    {
+
+        $array = array('date_suivi >=' => $date_debut, 'date_suivi <=' => $date_fin);
+
+        $this->db->select(" suivi_individu.date_suivi as date_suivi,
+                            menage.nomchefmenage as chef_menage,
+                            menage.NumeroEnregistrement as numero,
+                            individu.Nom as nom_individu,
+                            individu.id as id_individu,
+                            programme.libelle,
+                            source_financement.nom as nom_partenaire,
+                            see_village.Village as nom_village,
+                            see_commune.Commune as nom_commune,
+                            see_region.Region as nom_region,
+                            see_ile.Ile as nom_ile,
+                            see_agent.Nom as nom_agence_payement,
+                            type_transfert.description as type_transfert
+                            ",FALSE);
+        $this->db->select("sum(montant) as somme_montant",FALSE);
+
+        $result =  $this->db->from('suivi_individu,menage,individu,programme,source_financement,see_agent,see_village,see_commune,see_region,see_ile,type_transfert')
+                    
+                    ->where('suivi_individu.id_individu = individu.id')
+                    ->where('menage.id = individu.menage_id')
+                    ->where('suivi_individu.id_programme = programme.id')
+                    ->where('suivi_individu.id_partenaire = source_financement.id')
+                    ->where('suivi_individu.id_acteur = see_agent.id')
+                    ->where('suivi_individu.id_type_transfert = type_transfert.id')
+
+                    ->where('menage.village_id = see_village.id')
+                    ->where('see_commune.id = see_village.commune_id')
+                    ->where('see_commune.region_id = see_region.id')
+                    ->where('see_ile.id = see_region.ile_id')
+                    ->where($array)
+                    ->where($condition)
+                    
+                    ->group_by('id_individu,id_partenaire,id_acteur,date_suivi,id_programme')  
                     ->get()
                     ->result();
 
@@ -278,10 +332,19 @@ class Reporting_model extends CI_Model
         return null;
     }
 
-    public function nbr_mariage_precoce($condition)
+    public function nbr_mariage_precoce($date_debut, $date_fin,$condition)
     {
-        //$array = array('date_suivi >=' => $date_debut, 'date_suivi <=' => $date_fin);
-        $this->db->select(" count(*) as nbr,
+        if ($date_debut == 'null') 
+        {
+            $date_debut = "2017/01/01" ;
+        }
+        if ($date_fin == 'null')  
+        {
+            $annee =  Date("Y") ;
+            $date_fin = $annee."/12/31" ;
+        }
+        $array = array('date_suivi >=' => $date_debut, 'date_suivi <=' => $date_fin);
+        $this->db->select(" count(suivi_individu.id) as nbr,
                             type_mariage.description as type_mariage",FALSE);
                            //DATE_FORMAT(suivi_individu.date_suivi,'%Y') as annee",FALSE);
 
@@ -305,9 +368,10 @@ class Reporting_model extends CI_Model
                     ->join('type_mariage', 'type_mariage.id = suivi_individu.id_type_mariage')
         
                     ->where("suivi_individu.id_type_mariage > 0 ")
-                    ->group_by("type_mariage.id")
+                    ->group_by("suivi_individu.id_type_mariage")
                     
                     
+                    ->where($array)
                     ->where($condition)
                    
                     ->get()
@@ -325,9 +389,18 @@ class Reporting_model extends CI_Model
             }  
     }
 
-    public function nbr_violence($condition)
+    public function nbr_violence($date_debut, $date_fin,$condition)
     {
-        //$array = array('date_suivi >=' => $date_debut, 'date_suivi <=' => $date_fin);
+        if ($date_debut == 'null') 
+        {
+            $date_debut = "2017/01/01" ;
+        }
+        if ($date_fin == 'null')  
+        {
+            $annee =  date("Y") ;
+            $date_fin = $annee."/12/31" ;
+        }
+        $array = array('date_suivi >=' => $date_debut, 'date_suivi <=' => $date_fin);
         $this->db->select(" count(*) as nbr,
                             type_violence.description as type_violence",FALSE);
                            //DATE_FORMAT(suivi_individu.date_suivi,'%Y') as annee",FALSE);
@@ -346,6 +419,7 @@ class Reporting_model extends CI_Model
                     ->group_by("type_violence.id")
                     
                     
+                    ->where($array)
                     ->where($condition)
                    
                     ->get()
