@@ -78,6 +78,7 @@ class Suivi_individu extends REST_Controller {
 						}	
 						$tmp=array();
 						$tmp['id'] = $value->id;
+						$tmp['id_serveur_centrale'] = ($value->id_serveur_centrale);
 						$tmp['id_individu'] = ($value->id_individu);
 						$tmp['Nom'] = ($value->Nom);
 						$tmp['DateNaissance'] = ($value->DateNaissance);
@@ -253,32 +254,36 @@ class Suivi_individu extends REST_Controller {
 		if($tmp && intval($tmp) >0) {
 			$mois_grossesse=$tmp;
 		}
-        if ($supprimer == 0) {
-			$data = array(
-				'id_individu' => $this->post('id_individu'),
-				'id_programme' => $this->post('id_programme'),
-				'id_partenaire' => $id_partenaire,
-				'id_acteur' => $id_acteur,
-				'id_type_transfert' => $id_type_transfert,
-				'date_suivi' => $this->post('date_suivi'),
-				'montant' => $montant,
-				'observation' => $this->post('observation'),
-				'poids' => $poids,
-				'perimetre_bracial' => $perimetre_bracial,
-				'age_mois' => $age_mois,
-				'taille' => $taille,
-				'zscore' => $zscore,
-				'mois_grossesse' => $mois_grossesse,
-				'cause_mariage' => $this->post('cause_mariage'),
-				'age' => $age,
-				'lieu_infraction' => $this->post('lieu_infraction'),
-				'infraction'      => $this->post('infraction'),
-				'id_situation_matrimoniale' => $id_situation_matrimoniale,
-				'id_type_mariage' => $id_type_mariage,
-				'id_type_violence' => $id_type_violence,
-				'type_formation_recue' => $this->post('type_formation_recue'),
-			);               
-            if ($id == 0) {
+        if ($supprimer == 0) 
+        {
+			             
+            if ($id == 0) 
+            {
+            	$data = array(
+					'id_serveur_centrale' => null,
+					'id_individu' => $this->post('id_individu'),
+					'id_programme' => $this->post('id_programme'),
+					'id_partenaire' => $id_partenaire,
+					'id_acteur' => $id_acteur,
+					'id_type_transfert' => $id_type_transfert,
+					'date_suivi' => $this->post('date_suivi'),
+					'montant' => $montant,
+					'observation' => $this->post('observation'),
+					'poids' => $poids,
+					'perimetre_bracial' => $perimetre_bracial,
+					'age_mois' => $age_mois,
+					'taille' => $taille,
+					'zscore' => $zscore,
+					'mois_grossesse' => $mois_grossesse,
+					'cause_mariage' => $this->post('cause_mariage'),
+					'age' => $age,
+					'lieu_infraction' => $this->post('lieu_infraction'),
+					'infraction'      => $this->post('infraction'),
+					'id_situation_matrimoniale' => $id_situation_matrimoniale,
+					'id_type_mariage' => $id_type_mariage,
+					'id_type_violence' => $id_type_violence,
+					'type_formation_recue' => $this->post('type_formation_recue'),
+				);  
                 if (!$data) 
                 {
                     $this->response([
@@ -304,7 +309,35 @@ class Suivi_individu extends REST_Controller {
                         'message' => 'No request found'
                             ], REST_Controller::HTTP_BAD_REQUEST);
                 }
-            } else {
+            } 
+            else 
+            {
+            	$data = array(
+					
+					'id_serveur_centrale' => $this->post('id_serveur_centrale'),
+					'id_individu' => $this->post('id_individu'),
+					'id_programme' => $this->post('id_programme'),
+					'id_partenaire' => $id_partenaire,
+					'id_acteur' => $id_acteur,
+					'id_type_transfert' => $id_type_transfert,
+					'date_suivi' => $this->post('date_suivi'),
+					'montant' => $montant,
+					'observation' => $this->post('observation'),
+					'poids' => $poids,
+					'perimetre_bracial' => $perimetre_bracial,
+					'age_mois' => $age_mois,
+					'taille' => $taille,
+					'zscore' => $zscore,
+					'mois_grossesse' => $mois_grossesse,
+					'cause_mariage' => $this->post('cause_mariage'),
+					'age' => $age,
+					'lieu_infraction' => $this->post('lieu_infraction'),
+					'infraction'      => $this->post('infraction'),
+					'id_situation_matrimoniale' => $id_situation_matrimoniale,
+					'id_type_mariage' => $id_type_mariage,
+					'id_type_violence' => $id_type_violence,
+					'type_formation_recue' => $this->post('type_formation_recue'),
+				);  
                 if (!$data || !$id) {
                     $this->response([
                         'status' => FALSE,
