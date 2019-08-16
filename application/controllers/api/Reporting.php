@@ -31,7 +31,12 @@ class Reporting extends REST_Controller
     	if ($type_etat == 'transfert_monetaire_menage') 
     	{
     		
-    		$data = $this->ReportingManager->find_sum($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+    		$monetaire_menage = $this->ReportingManager->find_sum($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+            if($monetaire_menage!=null)
+            {
+                $data=$monetaire_menage;
+            }
+
     	}
 
         if ($type_etat == 'nbr_menage_par_programme') 
@@ -164,12 +169,20 @@ class Reporting extends REST_Controller
 
         if ($type_etat == "nbr_mariage_precoce") 
         {
-            $data = $this->ReportingManager->nbr_mariage_precoce($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+            $mariage = $this->ReportingManager->nbr_mariage_precoce($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+            if($mariage!=null)
+            {
+                $data=$mariage;
+            }
         }
 
         if ($type_etat == "nbr_violence") 
         {
-            $data = $this->ReportingManager->nbr_violence($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+            $violence = $this->ReportingManager->nbr_violence($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+            if($violence!=null)
+            {
+                $data=$violence;
+            }
         }
 
         if ($type_etat == "nbr_individu_par_formation") 
@@ -199,7 +212,11 @@ class Reporting extends REST_Controller
         if ($type_etat == 'transfert_monetaire_individu') 
         {
             
-            $data = $this->ReportingManager->find_sum_individu($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+            $transfer = $this->ReportingManager->find_sum_individu($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
+            if($transfer!=null)
+            {
+                $data=$transfer;
+            }
         }
 
     	if (count($data)>0) {

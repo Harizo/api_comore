@@ -452,6 +452,7 @@ class Exportexcel_individu extends REST_Controller
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":E".$ligne);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":E".$ligne)->applyFromArray($styleTitre);
+            //$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU');
         
             $ligne++;
