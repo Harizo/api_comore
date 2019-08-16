@@ -113,7 +113,7 @@ class Individu_programme_model extends CI_Model
     }
     public function findAllByProgrammeAndVillage($id_programmes,$id_village)
     {
-		$requete="select mp.id,mp.id_individu,i.Nom,i.DateNaissance,i.menage_id,m.NumeroEnregistrement,m.Addresse,m.nomchefmenage"
+		$requete="select mp.id,mp.id_individu,i.Nom,i.DateNaissance,i.menage_id,i.sexe,m.NumeroEnregistrement,m.Addresse,m.nomchefmenage"
 				." from individu_programme as mp"
 				." left outer join individu as i on i.id=mp.id_individu"
 				." left outer join menage as m on m.id=i.menage_id"

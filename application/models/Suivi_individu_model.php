@@ -34,6 +34,7 @@ class Suivi_individu_model extends CI_Model
     public function _set($suivi_individu)
     {
        return array(
+            'id_serveur_centrale'       => $suivi_individu['id_serveur_centrale'],
             'id_individu'       => $suivi_individu['id_individu'],
             'id_partenaire'     => $suivi_individu['id_partenaire'] ,                     
             'id_acteur'         => $suivi_individu['id_acteur'],                      
@@ -132,7 +133,7 @@ class Suivi_individu_model extends CI_Model
     }
     public function findAllByProgrammeAndIndividu($id_programmes,$id_individu)
     {
-		$requete="select sm.id,sm.id_individu,i.Nom,i.DateNaissance,i.sexe,"
+		$requete="select sm.id,sm.id_serveur_centrale,sm.id_individu,i.Nom,i.DateNaissance,i.sexe,"
 				."sm.id_programme,sm.id_acteur,sm.id_partenaire,sm.date_suivi,sm.montant,sm.id_type_transfert,sm.observation,"
 				."sm.poids,sm.taille,sm.perimetre_bracial,sm.zscore,sm.age_mois,sm.mois_grossesse,sm.age,sm.infraction,"
 				."sm.cause_mariage,sm.lieu_infraction,sm.id_situation_matrimoniale,sm.id_type_mariage,sm.id_type_violence,sm.type_formation_recue"

@@ -53,6 +53,7 @@ class Individu_programme extends REST_Controller {
                         $data[$key]['id'] = $value->id;
                         $data[$key]['id_individu'] = $value->id_individu;
                         $data[$key]['Nom'] = $value->Nom;
+                        $data[$key]['sexe'] = $value->sexe;
                         $data[$key]['nomchefmenage'] = $value->nomchefmenage;
                         $data[$key]['Addresse'] = $value->Addresse;
                         $data[$key]['NumeroEnregistrement'] = $value->NumeroEnregistrement;

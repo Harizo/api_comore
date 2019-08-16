@@ -52,14 +52,14 @@ class Utilisateurs extends REST_Controller {
             {
                 $nbr = 0 ;
                 $user = $this->UserManager->findAllByEnabled(0);
-                if ($user) {
+                /*if ($user) {
                     foreach ($user as $key => $value) 
                     {
                         $nbr++ ;
                     }
-                }
+                }*/
                 
-                $data = $nbr;
+                $data = $user[0];
             }
             else
             {
