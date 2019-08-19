@@ -10,7 +10,7 @@ class Utilisateurs extends REST_Controller {
     public function __construct() {
         parent::__construct();
         $this->load->model('utilisateurs_model', 'UserManager');
-
+        $this->load->model('ile_model', 'ileManager');
         $this->load->model('region_model', 'RegionManager');
     }
 
@@ -72,7 +72,9 @@ class Utilisateurs extends REST_Controller {
                         $data[$key]['id_ile'] = $value->id_ile;
                         $data[$key]['nom'] = $value->nom;
                         $data[$key]['prenom'] = $value->prenom;
-                     //   $data[$key]['sigle'] = $value->sigle;
+
+                        $ile = $this->ileManager->findById($value->id_ile);
+                        $data[$key]['ile'] = $ile->Ile;
                         $data[$key]['token'] = $value->token;
                         $data[$key]['email'] = $value->email;
                         $data[$key]['enabled'] = $value->enabled;
