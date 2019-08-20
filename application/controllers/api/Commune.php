@@ -40,7 +40,18 @@ class Commune extends REST_Controller {
         else
         {
             if ($cle_etrangere) {
-                $data = $this->CommuneManager->findAllByRegion($cle_etrangere);           
+                $tmp = $this->CommuneManager->findAllByRegion($cle_etrangere);
+                if($tmp)
+                {
+                    foreach ($tmp as $key => $value)
+                    {
+                        $data[$key]['id'] = $value->id;
+                        $data[$key]['Code'] = $value->Code;
+                        $data[$key]['Commune'] = $value->Commune;
+                    }
+                }else
+                    $data = array();
+
             } else {
      //miasa           
                 if ($id)  {
