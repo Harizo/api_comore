@@ -4,7 +4,7 @@ defined('BASEPATH') OR exit('No direct script access allowed');
 
 require APPPATH . '/libraries/REST_Controller.php';
 
-class Export_excel extends REST_Controller 
+class Export_excel_menage extends REST_Controller 
 {
 
     public function __construct() {
