@@ -299,7 +299,7 @@ class Export_excel extends REST_Controller
         // Set Orientation, size and scaling
         // Set Orientation, size and scaling
         $objPHPExcel->setActiveSheetIndex(0);
-        $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
+        $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
@@ -392,7 +392,11 @@ class Export_excel extends REST_Controller
                 $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":G".$ligne)->applyFromArray($stylecontenu);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, $value->numero);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$ligne, $value->chef_menage);
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, $value->date_suivi);
+                
+                $CurrentDate = $value->date_suivi;
+                $newDate = date("d-m-Y", strtotime($CurrentDate));
+               
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, $newDate);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$ligne, $value->nom_partenaire);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$ligne, $value->nom_agence_payement);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$ligne, $value->type_transfert);
@@ -455,16 +459,20 @@ class Export_excel extends REST_Controller
             $ligne++;
             foreach ($data as $key => $value)
             {
-                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylecontenu);
+                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":H".$ligne)->applyFromArray($stylecontenu);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, $value['NumeroEnregistrement']);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$ligne, $value['nomchefmenage']);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, $value['SexeChefMenage']);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('D'.$ligne, $value['agechefdemenage']);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('E'.$ligne, $value['Addresse']);
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$ligne, $value['DateInscription']);
+
+                $CurrentDate = $value['DateInscription'];
+                $newDate = date("d-m-Y", strtotime($CurrentDate));
+
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('F'.$ligne, $newDate);
                
                 foreach ($value['tab_programme'] as $pro => $progr){
-                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$ligne, $progr);
+                     $objPHPExcel->setActiveSheetIndex(0)->setCellValue('G'.$ligne, '- '.$progr);
                     
                 }
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('H'.$ligne, $value['PersonneInscription']);
