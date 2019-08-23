@@ -41,6 +41,8 @@ class Fokontany extends REST_Controller {
                         $data[$key]['code'] = $value->code;
                         $data[$key]['nom'] = $value->nom;
                         $data[$key]['id_commune'] = $value->id_commune;
+                        $data[$key]['programme_id'] = $value->programme_id;
+                        $data[$key]['zone_id'] = $value->zone_id;
                         $data[$key]['commune'] = $commune;
 
                     };
