@@ -93,6 +93,9 @@ class Commune extends REST_Controller {
                             $data[$key]['id'] = $value->id;
                             $data[$key]['Code'] = $value->Code;
                             $data[$key]['Commune'] = $value->Commune;
+                            $data[$key]['programme_id'] = $value->programme_id;
+                            $data[$key]['region_id'] = $value->region_id;
+                            $data[$key]['zone_id'] = $value->zone_id;
                             $data[$key]['prefecture'] = $pref;
                             $data[$key]['programme'] = $prog[0];
                         }

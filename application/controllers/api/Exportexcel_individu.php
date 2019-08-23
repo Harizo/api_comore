@@ -12,6 +12,11 @@ class Exportexcel_individu extends REST_Controller
         $this->load->model('reporting_model', 'ReportingManager');
         $this->load->model('programme_model', 'ProgrammeManager');
         $this->load->model('enquete_menage_model', 'EnquetemenageManager');
+        $this->load->model('ile_model', 'ileManager');
+        $this->load->model('region_model', 'RegionManager');
+        $this->load->model('commune_model', 'CommuneManager');
+        $this->load->model('village_model', 'VillageManager');
+
     }
 
     public function index_get() 
@@ -29,6 +34,44 @@ class Exportexcel_individu extends REST_Controller
         $date_fin = $this->get('date_fin');
         $repertoire = $this->get('repertoire');
         $data = array();
+        $data_filtre = array();
+        if (($id_ile!='*')&&($id_ile!=null))
+        {
+           $tmp = $this->ileManager->findById($id_ile);
+           if ($tmp!=null)
+           {
+              $data_filtre['ile'] =$tmp->Ile;
+           }
+        }
+        if (($id_region!='*')&&($id_region!=null))
+        {
+           $tmp = $this->RegionManager->findById($id_region);
+           if ($tmp!=null)
+           {
+              $data_filtre['region'] =$tmp->Region;
+           }
+        }
+        if (($id_commune!='*')&&($id_commune!=null))
+        {
+           $tmp = $this->CommuneManager->findById($id_commune);
+           if ($tmp!=null)
+           {
+              foreach ($tmp as $key => $value)
+              {
+                $data_filtre['commune'] =$value->Commune;
+              }
+              
+           }
+        }
+        if (($id_village!='*')&&($id_village!=null))
+        {
+           $tmp = $this->VillageManager->findById($id_village);
+           if ($tmp!=null)
+           {
+              $data_filtre['village'] =$tmp->Village;
+           }
+        }
+        
 
         if($menu=="exportexcel_individu")
         {
@@ -123,7 +166,8 @@ class Exportexcel_individu extends REST_Controller
                     $indice++;
                 }
 
-                $data['total'] = $nbr_total ;
+               //$data['total'] = $nbr_total ;
+
               
             }
 
@@ -176,6 +220,10 @@ class Exportexcel_individu extends REST_Controller
                 if($mariage!=null)
                 {
                     $data=$mariage;
+
+                    $data_filtre['date_fin'] =$date_fin;
+                    $data_filtre['date_deb'] =$date_deb;
+                    
                 }
             }
 
@@ -185,6 +233,8 @@ class Exportexcel_individu extends REST_Controller
                 if($violence!=null)
                 {
                     $data=$violence;
+                    $data_filtre['date_fin'] =$date_fin;
+                    $data_filtre['date_deb'] =$date_deb;
                 }
             }
 
@@ -219,13 +269,15 @@ class Exportexcel_individu extends REST_Controller
                 if($transfer!=null)
                 {
                     $data=$transfer;
+                    $data_filtre['date_fin'] =$date_fin;
+                    $data_filtre['date_deb'] =$date_deb;
                 }
 
             }
             
             if (count($data)>0)
             {
-                $excel=$this->exportexcel($repertoire,$type_etat,$data);
+                $excel=$this->exportexcel($repertoire,$type_etat,$data,$data_filtre);
             } else {
                 $this->response([
                     'status' => FALSE,
@@ -276,12 +328,44 @@ class Exportexcel_individu extends REST_Controller
         }
         
     }
-    public function exportexcel($repertoire,$type_etat,$data)
+    public function exportexcel($repertoire,$type_etat,$data,$data_filtre)
     {
         require_once 'Classes/PHPExcel.php';
         require_once 'Classes/PHPExcel/IOFactory.php';
 
         $nom_file='excel_individu';
+        $ile ='';
+        $region ='';
+        $commune ='';
+        $village ='';
+        $date_debut ='';
+        $date_final ='';
+        
+        if (isset($data_filtre['ile']))
+        {
+           $ile = $data_filtre['ile']; 
+        }
+        if (isset($data_filtre['region']))
+        {
+           $region = $data_filtre['region']; 
+        }
+        if (isset($data_filtre['commune']))
+        {
+           $commune = $data_filtre['commune']; 
+        }
+        if (isset($data_filtre['village']))
+        {
+           $village = $data_filtre['village']; 
+        }
+        if (isset($data_filtre['date_deb']))
+        {
+           $date_debut = $data_filtre['date_deb']; 
+        }
+
+        if (isset($data_filtre['date_fin']))
+        {
+           $date_final = $data_filtre['date_fin']; 
+        } 
         $directoryName = dirname(__FILE__) ."/../../../../assets/excel/".$repertoire;;
         
         if(!is_dir($directoryName))
@@ -314,11 +398,12 @@ class Exportexcel_individu extends REST_Controller
         $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
         $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
         $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
 
         $objPHPExcel->getActiveSheet()->setTitle("Rapport ndividu");
         $objPHPExcel->getActiveSheet()->getHeaderFooter()->setOddFooter('&R&11&B Page &P / &N');
         $objPHPExcel->getActiveSheet()->getHeaderFooter()->setEvenFooter('&R&11&B Page &P / &N');
-
+        //$objPHPExcel->getActiveSheet()->setShowGridlines(false);
         $styleTitre = array
         (
         'alignment' => array
@@ -352,6 +437,22 @@ class Exportexcel_individu extends REST_Controller
                 'size'  => 11
             ),
         );
+        $styleEntete = array
+        (
+            'alignment' => array
+            (
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                
+            ),
+            
+            'font' => array
+            (
+                'name'  => 'Calibri',
+                'bold'  => true,
+                'size'  => 11
+            ),
+        );
         $stylecontenu = array
         (
             'borders' => array
@@ -372,24 +473,37 @@ class Exportexcel_individu extends REST_Controller
         if($type_etat=='nbr_pers_avec_andicap')
         {
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
-            $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU');
+            $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":D".$ligne);
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($styleTitre);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'NOMBRE DE PERSONNE VIVANT AVEC HANDICAP ENREGISTREES');
         
             $ligne++;
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->applyFromArray($stylesousTitre);
-            $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->getNumberFormat()->setFormatCode('00');
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->getAlignment()->setWrapText(true);
+            
+            $ligneFiltre= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+            $ligne=$ligneFiltre;
+            
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])) {
+                $ligne=$ligneFiltre+1;
+            }
+
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylesousTitre);
+            $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getNumberFormat()->setFormatCode('00');
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getAlignment()->setWrapText(true);
+            $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+               $objPHPExcel->getActiveSheet()->mergeCells("C".$ligne.":D".$ligne);
 
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'HANDICAP');
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$ligne, 'NOMBRE');
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, 'NOMBRE');
             
             foreach ($data as $key => $value)
             {   
                 $ligne++;
-                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->applyFromArray($stylecontenu);
+                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylecontenu);
+              $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+               $objPHPExcel->getActiveSheet()->mergeCells("C".$ligne.":D".$ligne);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, $value['libelle']);
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$ligne, $value['nbr']);
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, $value['nbr']);
                  
             }
         }
@@ -398,9 +512,17 @@ class Exportexcel_individu extends REST_Controller
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":G".$ligne);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":G".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU');
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU PAR PROGRAMME');
         
             $ligne++;
+
+            $ligneFiltre= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+            $ligne=$ligneFiltre;           
+           
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])) {
+                $ligne=$ligneFiltre+1;
+            }
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":G".$ligne)->applyFromArray($stylesousTitre);
             $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":G".$ligne)->getNumberFormat()->setFormatCode('00');
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":G".$ligne)->getAlignment()->setWrapText(true);
@@ -453,9 +575,18 @@ class Exportexcel_individu extends REST_Controller
             $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":E".$ligne);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":E".$ligne)->applyFromArray($styleTitre);
             //$objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU');
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'NOMBRE DE CAS DE MAL NUTRITION');
         
             $ligne++;
+
+            $ligneFiltre= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+            $ligne=$ligneFiltre;
+           
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])) {
+                $ligne=$ligneFiltre+1;
+            }
+
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":E".$ligne)->applyFromArray($stylesousTitre);
             $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":E".$ligne)->getNumberFormat()->setFormatCode('00');
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":E".$ligne)->getAlignment()->setWrapText(true);
@@ -482,9 +613,18 @@ class Exportexcel_individu extends REST_Controller
            $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":D".$ligne);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU');
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'NOMBRE INDIVIDU PAR PROGRAMME');
         
             $ligne++;
+
+            $ligneFiltre= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+            $ligne=$ligneFiltre;
+           
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])) {
+                $ligne=$ligneFiltre+1;
+            }
+
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylesousTitre);
             $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getNumberFormat()->setFormatCode('00');
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getAlignment()->setWrapText(true);
@@ -516,9 +656,18 @@ class Exportexcel_individu extends REST_Controller
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":D".$ligne);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU');
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'NOMBRE INDIVIDU PAR FORMATION');
         
             $ligne++;
+
+            $ligneFiltre= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+            $ligne=$ligneFiltre;
+           
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])) {
+                $ligne=$ligneFiltre+1;
+            }
+
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylesousTitre);
             $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getNumberFormat()->setFormatCode('00');
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getAlignment()->setWrapText(true);
@@ -541,48 +690,73 @@ class Exportexcel_individu extends REST_Controller
         if($type_etat == "nbr_mariage_precoce")
         {
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
-            $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU');
+            $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":D".$ligne);
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($styleTitre);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'NOMBRE DE MARIAGE PRECOCE');
         
             $ligne++;
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->applyFromArray($stylesousTitre);
-            $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->getNumberFormat()->setFormatCode('00');
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->getAlignment()->setWrapText(true);
+            $insert= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+           $ligne= $insert;
+
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])||isset($data_filtre['date_deb'])) {
+                $ligne=$insert+1;
+            }
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylesousTitre);
+            $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getNumberFormat()->setFormatCode('00');
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getAlignment()->setWrapText(true);
+
+            $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+            $objPHPExcel->getActiveSheet()->mergeCells("C".$ligne.":D".$ligne);
 
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'Type de mariage');
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$ligne, 'Nombre');;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, 'Nombre');;
 
              foreach ($data as $key => $value)
             {
                 $ligne++;
-                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->applyFromArray($stylecontenu);
+                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylecontenu);
+                $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+                $objPHPExcel->getActiveSheet()->mergeCells("C".$ligne.":D".$ligne);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, $value->type_mariage);
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$ligne, $value->nbr);
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, $value->nbr);
             }
                
         } 
         if($type_etat == "nbr_violence")
         {
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
-            $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU');
+            $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":D".$ligne);
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($styleTitre);
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'NOMBRE DE VIOLENCE');
         
             $ligne++;
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->applyFromArray($stylesousTitre);
-            $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->getNumberFormat()->setFormatCode('00');
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->getAlignment()->setWrapText(true);
+           $insert= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+           $ligne= $insert;
+           
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])||isset($data_filtre['date_deb'])) {
+                $ligne=$insert+1;
+            }
+
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylesousTitre);
+            $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getNumberFormat()->setFormatCode('00');
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->getAlignment()->setWrapText(true);
+
+            $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+            $objPHPExcel->getActiveSheet()->mergeCells("C".$ligne.":D".$ligne);
 
             $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'Type de violence');
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$ligne, 'Nombre');;
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, 'Nombre');;
 
             foreach ($data as $key => $value)
             {
                 $ligne++;
-                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":B".$ligne)->applyFromArray($stylecontenu);
+                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylecontenu);
+                $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+                $objPHPExcel->getActiveSheet()->mergeCells("C".$ligne.":D".$ligne);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, $value->type_violence);
-                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$ligne, $value->nbr);
+                $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, $value->nbr);
             }
               
         } 
@@ -591,9 +765,17 @@ class Exportexcel_individu extends REST_Controller
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":H".$ligne);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":H".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'INDIVIDU');
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'HISTORIQUE DE TRANSFERT MONETAIRE');
         
             $ligne++;
+            $insert= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+           $ligne= $insert;
+           
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])||isset($data_filtre['date_deb'])) {
+                $ligne=$insert+1;
+            }
+            
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":H".$ligne)->applyFromArray($stylesousTitre);
             $objPHPExcel -> getActiveSheet()->getStyle("A".$ligne.":H".$ligne)->getNumberFormat()->setFormatCode('00');
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":H".$ligne)->getAlignment()->setWrapText(true);
@@ -637,6 +819,7 @@ class Exportexcel_individu extends REST_Controller
                 'status' => TRUE,
                 'nom_file' => $nom_file.".xlsx",
                 'message' => 'file writed in server',
+                'filtre' => $data_filtre,
             ], REST_Controller::HTTP_OK);
           
         } 
@@ -650,5 +833,93 @@ class Exportexcel_individu extends REST_Controller
         }  
     }
 
+   public function insertFiltre($ile,$region,$commune,$village,$date_deb,$date_fin,$style,$ligne,$objPHPExcel)
+    {
+        if ($ile)
+            {   
+               $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+               $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+               
+               $objRichText = new PHPExcel_RichText();
+
+               $titre = $objRichText->createTextRun('ILE                     : ');
+               $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($ile);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+
+            if ($region)
+            {   
+                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+                $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+
+                $objRichText = new PHPExcel_RichText();
+
+                $titre = $objRichText->createTextRun('PREFECTURE : ');
+                $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($region);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+
+            if ($commune)
+            {
+               $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+               $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+               $objRichText = new PHPExcel_RichText();
+
+                $titre = $objRichText->createTextRun('COMMUNE   : ');
+                $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($commune);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+
+            if ($village)
+            {
+               $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+               $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+
+               $objRichText = new PHPExcel_RichText();
+
+                $titre = $objRichText->createTextRun('VILLAGE          : ');
+                $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($village);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+            if ($date_deb && $date_fin)
+            {   $ligne++;
+               $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+               $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+
+               $FiltreDateDeb  = date("d-m-Y", strtotime($date_deb));
+               $FiltreDateFin  = date("d-m-Y", strtotime($date_fin));
+
+               $objRichText = new PHPExcel_RichText();
+
+                $titre = $objRichText->createTextRun('Date du           : ');
+                $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($FiltreDateDeb.' au '.$FiltreDateFin);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+            return $ligne;
+    }
 }
 ?>
