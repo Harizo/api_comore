@@ -75,34 +75,6 @@ class Exportexcel_individu extends REST_Controller
 
         if($menu=="exportexcel_individu")
         {
-            if ($type_etat == 'transfert_monetaire_menage') 
-            {                
-                $monetaire_menage = $this->ReportingManager->find_sum($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-                if($monetaire_menage!=null)
-                {
-                    $data=$monetaire_menage;
-                }
-
-            }
-
-            if ($type_etat == 'nbr_menage_par_programme') 
-            {
-                $all_programme = $this->ProgrammeManager->findAll();
-                $total = 0 ;
-                foreach ($all_programme as $key => $value) 
-                {
-                    $id_prog = '"'.$value->id.'"' ;
-                    $data[$key]['id'] = $value->id ;
-                    $data[$key]['libelle'] = $value->libelle ;
-                    $nbr = $this->ReportingManager->nbr_menage_par_programme($id_prog,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-                    $data[$key]['nbr'] = $nbr->nbr;
-                    $total = $total + $nbr->nbr;
-                    $data[$key]['nbr_menage_enregistrer'] = $nbr->nbr_menage_enregistrer;
-                }
-
-                $data['total'] = $total ;
-            }
-
             if ($type_etat == 'nbr_individu_par_programme') 
             {
                 $all_programme = $this->ProgrammeManager->findAll();
@@ -119,36 +91,6 @@ class Exportexcel_individu extends REST_Controller
                 }
 
                 $data['total'] = $total ;
-            }
-
-            if ($type_etat == 'menage_par_programme') 
-            {
-
-                $menage_programme = $this->ReportingManager->menage_par_programme($this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-
-                if ($menage_programme) 
-                {
-                    foreach ($menage_programme as $key => $value) 
-                    {
-                        $data[$key]['id_menage'] = $value->id_menage ;
-                        $tab_id_programme = unserialize($value->tab_id_programme) ;
-                        $tab_programme = array() ;
-                        foreach ($tab_id_programme as $k => $val) 
-                        {
-                            $programme  = $this->ProgrammeManager->findById_obj($val);
-                            $tab_programme[$k]  = $programme->libelle;
-                        }
-                        //$data[$key]['tab_id_programme'] = $tab_id_programme ;
-                        $data[$key]['tab_programme'] = $tab_programme ;
-                        $data[$key]['NumeroEnregistrement'] = $value->NumeroEnregistrement ;
-                        $data[$key]['DateInscription'] = $value->DateInscription ;
-                        $data[$key]['PersonneInscription'] = $value->PersonneInscription ;
-                        $data[$key]['Addresse'] = $value->Addresse ;
-                        $data[$key]['nomchefmenage'] = $value->nomchefmenage ;
-                        $data[$key]['SexeChefMenage'] = $value->SexeChefMenage ;
-                        $data[$key]['agechefdemenage'] = $value->agechefdemenage ;
-                    }
-                }
             }
 
             if ($type_etat == 'nbr_pers_avec_andicap') 
@@ -383,13 +325,14 @@ class Exportexcel_individu extends REST_Controller
 
         $ligne=1;
         $objPHPExcel->setActiveSheetIndex(0);
-        $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
+        $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
         $objPHPExcel->getActiveSheet()->getPageMargins()->SetLeft(0.64); //***pour marge gauche
-        $objPHPExcel->getActiveSheet()->getPageMargins()->SetRight(0.64);
+        $objPHPExcel->getActiveSheet()->getPageMargins()->SetRight(0.64);        
+        $objPHPExcel->getActiveSheet()->getPageSetup()->setHorizontalCentered(true);
 
         $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
         $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
@@ -399,6 +342,14 @@ class Exportexcel_individu extends REST_Controller
         $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
         $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
         $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
 
         $objPHPExcel->getActiveSheet()->setTitle("Rapport ndividu");
         $objPHPExcel->getActiveSheet()->getHeaderFooter()->setOddFooter('&R&11&B Page &P / &N');

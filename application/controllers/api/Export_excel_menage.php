@@ -12,6 +12,10 @@ class Export_excel_menage extends REST_Controller
         $this->load->model('reporting_model', 'ReportingManager');
         $this->load->model('programme_model', 'ProgrammeManager');
         $this->load->model('enquete_menage_model', 'EnquetemenageManager');
+        $this->load->model('ile_model', 'ileManager');
+        $this->load->model('region_model', 'RegionManager');
+        $this->load->model('commune_model', 'CommuneManager');
+        $this->load->model('village_model', 'VillageManager');
     }
 
     public function index_get() 
@@ -29,17 +33,58 @@ class Export_excel_menage extends REST_Controller
         $repertoire = $this->get('repertoire');
         $data = array() ;
         //$calcul = array();
+        $data_filtre = array();
+
+        if (($id_ile!='*')&&($id_ile!=null))
+        {
+           $tmp = $this->ileManager->findById($id_ile);
+           if ($tmp!=null)
+           {
+              $data_filtre['ile'] =$tmp->Ile;
+           }
+        }
+        if (($id_region!='*')&&($id_region!=null))
+        {
+           $tmp = $this->RegionManager->findById($id_region);
+           if ($tmp!=null)
+           {
+              $data_filtre['region'] =$tmp->Region;
+           }
+        }
+        if (($id_commune!='*')&&($id_commune!=null))
+        {
+           $tmp = $this->CommuneManager->findById($id_commune);
+           if ($tmp!=null)
+           {
+              foreach ($tmp as $key => $value)
+              {
+                $data_filtre['commune'] =$value->Commune;
+              }
+              
+           }
+        }
+        if (($id_village!='*')&&($id_village!=null))
+        {
+           $tmp = $this->VillageManager->findById($id_village);
+           if ($tmp!=null)
+           {
+              $data_filtre['village'] =$tmp->Village;
+           }
+        }
+        //Historique transfert monetaire
     	if ($selection == 'transfert_monetaire_menage') 
     	{
     		
     		$donnee = $this->ReportingManager->find_sum($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
             if ($donnee!=null) {
                 $data = $donnee;
+                $data_filtre['date_fin'] =$date_fin;
+                $data_filtre['date_deb'] =$date_deb;
             }
     		
     	}
     	
-
+        //Nombre ménage par programme
         if ($selection == 'nbr_menage_par_programme') 
         {
             $all_programme = $this->ProgrammeManager->findAll();
@@ -66,25 +111,7 @@ class Export_excel_menage extends REST_Controller
             $data['total'] = $total ;
             //$this->export($data,$repertoire);
         }
-
-        if ($selection == 'nbr_individu_par_programme') 
-        {
-            $all_programme = $this->ProgrammeManager->findAll();
-            $total = 0 ;
-            foreach ($all_programme as $key => $value) 
-            {
-                $id_prog = '"'.$value->id.'"' ;
-                $data[$key]['id'] = $value->id ;
-                $data[$key]['libelle'] = $value->libelle ;
-                $nbr = $this->ReportingManager->nbr_individu_par_programme($id_prog,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-                $data[$key]['nbr'] = $nbr->nbr;
-                $total = $total + $nbr->nbr;
-                $data[$key]['nbr_individu_enregistrer'] = $nbr->nbr_individu_enregistrer;
-            }
-
-            $data['total'] = $total ;
-        }
-
+        //Ménage par programme
         if ($selection == 'menage_par_programme') 
         {
 
@@ -114,115 +141,11 @@ class Export_excel_menage extends REST_Controller
                 }
             }
         }
-
-        if ($selection == 'nbr_pers_avec_andicap') 
+       
+        
+    	if (count($data)>0)
         {
-            $tab_handicap = ["id_handicap_visuel"=>"Handicap visuel","id_handicap_parole"=>"Handicap de la parole","id_handicap_auditif"=>"Handicap auditif","id_handicap_mental"=>"Handicap mental","id_handicap_moteur"=>"Handicap moteur"];
-            $indice = 0 ;
-            $nbr_total = 0 ;
-            foreach ($tab_handicap as $key => $value) {
-                $data[$indice]['libelle'] = $value ;
-                $nbr = $this->ReportingManager->nbr_individu_handicape_par_type($key, $this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-                $data[$indice]['nbr'] = $nbr->nbr_handicape;
-                $nbr_total = $nbr_total + $nbr->nbr_handicape;
-
-
-                $indice++;
-            }
-
-            $data['total'] = $nbr_total ;
-          
-        }
-
-        if ($selection == 'individu_par_programme') 
-        {
-
-            $individu_programme = $this->ReportingManager->individu_par_programme($this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-
-            if ($individu_programme) 
-            {
-                foreach ($individu_programme as $key => $value) 
-                {
-                    $data[$key]['id_individu'] = $value->id_individu ;
-                    $tab_id_programme = unserialize($value->tab_id_programme) ;
-                    $tab_programme = array() ;
-                    foreach ($tab_id_programme as $k => $val) 
-                    {
-                        $programme  = $this->ProgrammeManager->findById_obj($val);
-                        $tab_programme[$k]  = $programme->libelle;
-                    }
-                    //$data[$key]['tab_id_programme'] = $tab_id_programme ;
-                    $data[$key]['tab_programme'] = $tab_programme ;
-                    $data[$key]['Nom'] = $value->Nom ;
-                    $data[$key]['DateNaissance'] = $value->DateNaissance ;
-                    $data[$key]['Activite'] = $value->Activite ;
-                    $data[$key]['travailleur'] = $value->travailleur ;
-                    $data[$key]['sexe'] = $value->sexe ;
-                    $data[$key]['NumeroEnregistrement'] = $value->NumeroEnregistrement ;
-                }
-            }
-        }
-
-        if ($selection == 'nbr_enfant_mal_nouri') 
-        {
-            $tres_severe= $this->ReportingManager->nbr_enfant_mal_nouri("-4","-4", $this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-            $severe_mas= $this->ReportingManager->nbr_enfant_mal_nouri("-3","-3", $this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-            $moderee_mam= $this->ReportingManager->nbr_enfant_mal_nouri("-2","-2", $this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-            $sortie_pecma= $this->ReportingManager->nbr_enfant_mal_nouri("-1.5","-1.5", $this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-            $poids_median= $this->ReportingManager->nbr_enfant_mal_nouri("-1","0", $this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-            $data[0]['tres_severe'] = $tres_severe->nbr_enfant;
-            $data[0]['severe_mas'] = $severe_mas->nbr_enfant;
-            $data[0]['moderee_mam'] = $moderee_mam->nbr_enfant;
-            $data[0]['sortie_pecma'] = $sortie_pecma->nbr_enfant;
-            $data[0]['poids_median'] = $poids_median->nbr_enfant;
-        }
-
-        if ($selection == "nbr_mariage_precoce") 
-        {
-           $data = $this->ReportingManager->nbr_mariage_precoce($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-        }
-
-        if ($selection == "nbr_violence") 
-        {
-            $data = $this->ReportingManager->nbr_violence($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-        }
-
-        if ($selection == "nbr_individu_par_formation") 
-        {
-            $type_formation_recues = $this->EnquetemenageManager->findAll("type_formation_recue");
-
-            if ($type_formation_recues) 
-            {
-                $total = 0 ;
-                foreach ($type_formation_recues as $key => $value) 
-                {
-                    $id_formation = '"'.$value->id.'"' ;
-                    $data[$key]['id'] = $value->id ;
-                    $data[$key]['description'] = $value->description ;
-                    $nbr = $this->ReportingManager->nbr_individu_par_formation($id_formation,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-
-                    $data[$key]['nbr'] = $nbr->nbr;
-                    $data[$key]['nbr_femme'] = $nbr->nbr_femme;
-                    $data[$key]['nbr_homme'] = $nbr->nbr_homme;
-                    $total = $total + $nbr->nbr;
-                }
-
-               
-            }
-        }
-
-        if ($selection == 'transfert_monetaire_individu') 
-        {
-            
-            $data = $this->ReportingManager->find_sum_individu($date_deb, $date_fin,$this->generer_requete_analyse($id_ile,$id_region,$id_commune,$id_village));
-        }
-        $export=$this->export($data,$repertoire,$selection);
-    	if (count($data)>0) {
-            $this->response([
-                'status' => TRUE,
-                'response' => $data,
-                'message' => 'Get data success',
-            ], REST_Controller::HTTP_OK);
+            $export=$this->export($data,$repertoire,$selection,$data_filtre);
         } else {
             $this->response([
                 'status' => FALSE,
@@ -273,11 +196,44 @@ class Export_excel_menage extends REST_Controller
         
     }
     
-    public function export($data,$repertoire,$selection){
+    public function export($data,$repertoire,$selection,$data_filtre){
     	require_once 'Classes/PHPExcel.php';
         require_once 'Classes/PHPExcel/IOFactory.php';
 
         $nom_file='menage';
+        $ile ='';
+        $region ='';
+        $commune ='';
+        $village ='';
+        $date_debut ='';
+        $date_final ='';
+        
+        if (isset($data_filtre['ile']))
+        {
+           $ile = $data_filtre['ile']; 
+        }
+        if (isset($data_filtre['region']))
+        {
+           $region = $data_filtre['region']; 
+        }
+        if (isset($data_filtre['commune']))
+        {
+           $commune = $data_filtre['commune']; 
+        }
+        if (isset($data_filtre['village']))
+        {
+           $village = $data_filtre['village']; 
+        }
+        if (isset($data_filtre['date_deb']))
+        {
+           $date_debut = $data_filtre['date_deb']; 
+        }
+
+        if (isset($data_filtre['date_fin']))
+        {
+           $date_final = $data_filtre['date_fin']; 
+        }
+
         $directoryName = dirname(__FILE__) ."/../../../../assets/excel/".$repertoire;
         
         //Check if the directory already exists.
@@ -299,22 +255,32 @@ class Export_excel_menage extends REST_Controller
         // Set Orientation, size and scaling
         // Set Orientation, size and scaling
         $objPHPExcel->setActiveSheetIndex(0);
-        $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_PORTRAIT);
+        $objPHPExcel->getActiveSheet()->getPageSetup()->setOrientation(PHPExcel_Worksheet_PageSetup::ORIENTATION_LANDSCAPE);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setPaperSize(PHPExcel_Worksheet_PageSetup::PAPERSIZE_A4);
+
         $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToPage(true);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToWidth(1);
         $objPHPExcel->getActiveSheet()->getPageSetup()->setFitToHeight(0);
         $objPHPExcel->getActiveSheet()->getPageMargins()->SetLeft(0.64); //***pour marge gauche
         $objPHPExcel->getActiveSheet()->getPageMargins()->SetRight(0.64); //***pour marge droite
+        $objPHPExcel->getActiveSheet()->getPageSetup()->setHorizontalCentered(true);
 
-        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(30);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(30);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(30);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(30);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(30);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(30);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(30);
-        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(30);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setWidth(20);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('A')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('B')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('C')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('D')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('E')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('F')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('G')->setAutoSize(true);
+        $objPHPExcel->getActiveSheet()->getColumnDimension('H')->setAutoSize(true);
         
         $objPHPExcel->getActiveSheet()->setTitle("menage");
 
@@ -354,6 +320,22 @@ class Export_excel_menage extends REST_Controller
                 'size'  => 12
             ),
         );
+        $styleEntete = array
+        (
+            'alignment' => array
+            (
+                'horizontal' => PHPExcel_Style_Alignment::HORIZONTAL_LEFT,
+                'vertical' => PHPExcel_Style_Alignment::VERTICAL_CENTER,
+                
+            ),
+            
+            'font' => array
+            (
+                'name'  => 'Calibri',
+                'bold'  => true,
+                'size'  => 11
+            ),
+        );
         $stylecontenu = array
         (
             'borders' => array
@@ -370,10 +352,17 @@ class Export_excel_menage extends REST_Controller
         if ($selection =='transfert_monetaire_menage') {
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":G".$ligne);
-            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":G".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'MENAGE');
-            
+            $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":G".$ligne)->applyFromArray($styleTitre);            
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'Historique transfert monetaire');            
             $ligne++;
+
+            $ligneFiltre= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+            $ligne=$ligneFiltre;
+            
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])) {
+                $ligne=$ligneFiltre+1;
+            }
 
             //$objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":G".$ligne)->applyFromArray($stylesousTitre);
@@ -410,9 +399,16 @@ class Export_excel_menage extends REST_Controller
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":D".$ligne);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'MENAGE');
-            
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'Nombre ménage par programme');            
             $ligne++;
+
+            $ligneFiltre= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+            $ligne=$ligneFiltre;
+            
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])) {
+                $ligne=$ligneFiltre+1;
+            }
 
             //$objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylesousTitre);
@@ -426,6 +422,7 @@ class Export_excel_menage extends REST_Controller
             foreach ($data as $key => $value)
             {
                 $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":D".$ligne)->applyFromArray($stylecontenu);
+
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, $value['libelle']);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('B'.$ligne, $value['nbr']);
                 $objPHPExcel->setActiveSheetIndex(0)->setCellValue('C'.$ligne, $value['nbr_menage_enregistrer']);
@@ -440,9 +437,16 @@ class Export_excel_menage extends REST_Controller
             $objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":H".$ligne);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":H".$ligne)->applyFromArray($styleTitre);
-            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'MENAGE');
-            
+            $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne, 'Ménage par programme');            
             $ligne++;
+
+            $ligneFiltre= $this->insertFiltre($ile,$region,$commune,$village,$date_debut,$date_final,$styleEntete,$ligne,$objPHPExcel);
+           
+            $ligne=$ligneFiltre;
+            
+            if (isset($data_filtre['ile'])||isset($data_filtre['region'])||isset($data_filtre['commune'])||isset($data_filtre['village'])) {
+                $ligne=$ligneFiltre+1;
+            }
 
             //$objPHPExcel->getActiveSheet()->getRowDimension($ligne)->setRowHeight(30);
             $objPHPExcel->getActiveSheet()->getStyle("A".$ligne.":H".$ligne)->applyFromArray($stylesousTitre);
@@ -500,6 +504,95 @@ class Export_excel_menage extends REST_Controller
                    'message' => "Something went wrong: ". $e->getMessage(),
                 ], REST_Controller::HTTP_OK);
         }
+    }
+
+    public function insertFiltre($ile,$region,$commune,$village,$date_deb,$date_fin,$style,$ligne,$objPHPExcel)
+    {
+        if ($ile)
+            {   
+               $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+               $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+               
+               $objRichText = new PHPExcel_RichText();
+
+               $titre = $objRichText->createTextRun('ILE                     : ');
+               $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($ile);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+
+            if ($region)
+            {   
+                $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+                $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+
+                $objRichText = new PHPExcel_RichText();
+
+                $titre = $objRichText->createTextRun('PREFECTURE : ');
+                $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($region);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+
+            if ($commune)
+            {
+               $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+               $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+               $objRichText = new PHPExcel_RichText();
+
+                $titre = $objRichText->createTextRun('COMMUNE   : ');
+                $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($commune);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+
+            if ($village)
+            {
+               $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+               $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+
+               $objRichText = new PHPExcel_RichText();
+
+                $titre = $objRichText->createTextRun('VILLAGE          : ');
+                $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($village);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+            if ($date_deb && $date_fin)
+            {   $ligne++;
+               $objPHPExcel->getActiveSheet()->getStyle("A".$ligne)->applyFromArray($style);
+               $objPHPExcel->getActiveSheet()->mergeCells("A".$ligne.":B".$ligne);
+
+               $FiltreDateDeb  = date("d-m-Y", strtotime($date_deb));
+               $FiltreDateFin  = date("d-m-Y", strtotime($date_fin));
+
+               $objRichText = new PHPExcel_RichText();
+
+                $titre = $objRichText->createTextRun('Date du           : ');
+                $titre->getFont()->applyFromArray(array( "bold" => true, "size" => 11, "name" => "Calibri"));
+
+               $contenu = $objRichText->createTextRun($FiltreDateDeb.' au '.$FiltreDateFin);
+               $contenu->getFont()->applyFromArray(array("size" => 11, "name" => "Calibri"));
+               
+               $objPHPExcel->setActiveSheetIndex(0)->setCellValue('A'.$ligne,$objRichText);
+               $ligne++; 
+            }
+            return $ligne;
     } 
     
 }
