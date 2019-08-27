@@ -36,6 +36,11 @@ class Ile extends REST_Controller {
                         $data[$key]['id'] = $value->id;
                         $data[$key]['Code'] = $value->Code;
                         $data[$key]['Ile'] = $value->Ile;
+                        $data[$key]['programme_id'] = $value->programme_id;
+                        $data[$key]['a_ete_modifie'] = $value->a_ete_modifie;
+                        $data[$key]['supprime'] = $value->supprime;
+                        $data[$key]['userid'] = $value->userid;
+                        $data[$key]['datemodification'] = $value->datemodification;
                         $data[$key]['programme'] = $prog[0];
                         
                     };

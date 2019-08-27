@@ -44,7 +44,7 @@ class Menage extends REST_Controller {
         }
             
         
-        if (count($data)>0) {
+        if ($data) {
             $this->response([
                 'status' => TRUE,
                 'response' => $data,
